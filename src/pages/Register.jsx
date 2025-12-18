@@ -72,7 +72,7 @@ export default function Register() {
         {/* Formulario */}
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Correo U-Talca</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Correo</label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-slate-500 w-5 h-5" />
               <input
