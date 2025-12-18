@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Un fondo oscuro suave para que no canse la vista */
+body {
+  @apply bg-slate-900 text-slate-100;
+}
