@@ -9,7 +9,7 @@ export function magicParser(rawText) {
   while (i < lineas.length) {
     const linea = lineas[i];
 
-    // 1. DETECTAR NOMBRE DEL RAMO
+    // 1. DETECTAR NOMBRE DEL RAMO (FORMATO ORIGINAL - con Area)
     if (i + 1 < lineas.length && lineas[i + 1].includes('Area') && !linea.includes('Area') && !linea.includes('Evaluación')) {
       let nombre = linea
         .replace(/\(CURICO\)\s*/g, '')
@@ -24,6 +24,36 @@ export function magicParser(rawText) {
         };
         ramosDetectados.push(ramoActual);
         unidadActual = null;
+      }
+      i++;
+      continue;
+    }
+
+    // 1B. DETECTAR NOMBRE DEL RAMO (FORMATO NUEVO - con encabezados Tipo/Calidad/Fecha)
+    if (i + 1 < lineas.length &&
+        lineas[i + 1].includes('Tipo') &&
+        lineas[i + 1].includes('Calidad') &&
+        lineas[i + 1].includes('Fecha de Prueba') &&
+        !linea.includes('Tipo') &&
+        !linea.includes('Evaluación')) {
+      let nombre = linea
+        .replace(/\(CURICO\)\s*/g, '')
+        .replace(/^\s*-\s*/, '')
+        .trim();
+
+      if (nombre.length > 3 && !nombre.match(/^\d+%?$/)) {
+        ramoActual = {
+          id: crypto.randomUUID(),
+          nombre: nombre,
+          unidades: [{
+            id: crypto.randomUUID(),
+            nombre: 'Evaluaciones',
+            peso: 100,
+            evaluaciones: []
+          }]
+        };
+        ramosDetectados.push(ramoActual);
+        unidadActual = ramoActual.unidades[0];
       }
       i++;
       continue;
@@ -61,12 +91,12 @@ export function magicParser(rawText) {
       continue;
     }
 
-    // 3. DETECTAR EVALUACIÓN (LÓGICA CORREGIDA)
+    // 3. DETECTAR EVALUACIÓN (FORMATO ORIGINAL - con "Evaluación N")
     if (unidadActual && linea.match(/^Evaluación\s+\d+/i)) {
-      
+
       // ESTRATEGIA: Usar la fecha como ancla para separar texto de números
       const fechaMatch = linea.match(/(\d{2}\/\d{2}\/\d{4})/);
-      
+
       let nombre = 'Evaluación';
       let fecha = 'Sin fecha';
       let peso = 0;
@@ -74,10 +104,10 @@ export function magicParser(rawText) {
 
       if (fechaMatch) {
         fecha = fechaMatch[1];
-        
+
         // Cortamos la línea usando la fecha
         const partes = linea.split(fechaMatch[0]); // [0]: "Evaluación 1 Informe...", [1]: " 60 6.8"
-        
+
         // PROCESAR LADO IZQUIERDO (NOMBRE)
         if (partes[0]) {
             nombre = partes[0]
@@ -89,7 +119,7 @@ export function magicParser(rawText) {
         // PROCESAR LADO DERECHO (NUMEROS)
         if (partes[1]) {
             const numerosRaw = partes[1].trim(); // Ej: "60 6.8" o "30"
-            
+
             // Buscamos si termina en nota decimal (ej: 6.8)
             const notaMatch = numerosRaw.match(/(\d{1,2}\.\d)$/);
 
@@ -107,7 +137,7 @@ export function magicParser(rawText) {
                 }
             }
         }
-      } 
+      }
       // FALLBACK: Si no hay fecha, intentamos limpieza básica
       else {
           nombre = linea.replace(/^Evaluación\s+\d+/, '').trim();
@@ -122,6 +152,55 @@ export function magicParser(rawText) {
       });
       i++;
       continue;
+    }
+
+    // 3B. DETECTAR EVALUACIÓN (FORMATO NUEVO - directamente con tipo)
+    // Formato: "Informe de proyecto    Obligatoria    13/10/2025    22        5.8    1.276"
+    if (unidadActual && !linea.includes('Tipo') && !linea.includes('Calidad')) {
+      const fechaMatch = linea.match(/(\d{2}\/\d{2}\/\d{4})/);
+
+      if (fechaMatch) {
+        let nombre = 'Evaluación';
+        let fecha = fechaMatch[1];
+        let peso = 0;
+        let nota = null;
+
+        // Cortamos la línea usando la fecha
+        const partes = linea.split(fechaMatch[0]);
+
+        // PROCESAR LADO IZQUIERDO (NOMBRE)
+        if (partes[0]) {
+          nombre = partes[0]
+            .replace(/(Obligatoria|Acum\.Opcional|Requisito de aprobación)/g, '')
+            .trim();
+        }
+
+        // PROCESAR LADO DERECHO (NÚMEROS)
+        if (partes[1]) {
+          const numerosRaw = partes[1].trim();
+          const numeros = numerosRaw.split(/\s+/).filter(n => n.match(/^\d+(\.\d+)?$/));
+
+          if (numeros.length >= 1) {
+            peso = parseInt(numeros[0]) || 0;
+          }
+          if (numeros.length >= 2) {
+            nota = parseFloat(numeros[1]);
+          }
+        }
+
+        // Solo agregar si tiene nombre válido
+        if (nombre && nombre.length > 0 && nombre !== 'Evaluación') {
+          unidadActual.evaluaciones.push({
+            id: crypto.randomUUID(),
+            nombre: nombre,
+            fecha: fecha,
+            peso: peso,
+            nota: nota
+          });
+        }
+        i++;
+        continue;
+      }
     }
 
     i++;
