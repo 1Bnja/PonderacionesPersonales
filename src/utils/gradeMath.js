@@ -18,24 +18,16 @@ export function calcularEstadisticasRamo(ramo, notaAprobacion = 4.0) {
           return ev;
       });
 
-      // Promedio de la unidad basado en las evaluaciones que tienen nota
-      let promedioActualUnidad = 0;
-      if (pesoUnidadEvaluado > 0) {
-          promedioActualUnidad = (acumuladoUnidad * 100) / pesoUnidadEvaluado;
-      }
+      // Promedio ponderado de la unidad (suma directa de los aportes)
+      // Ejemplo: 5.1×50% + 6.5×30% = 2.55 + 1.95 = 4.5
+      let promedioActualUnidad = acumuladoUnidad;
 
-      // Sumar al acumulado del ramo SOLO si la unidad está 100% evaluada
-      if (pesoUnidadEvaluado >= 100) {
-          // Unidad completamente evaluada: aporta su promedio ponderado
-          // Ejemplo: Unidad vale 40% del ramo, promedio 6.45 → aporta 6.45 * 0.4 = 2.58 puntos
-          acumuladoRamo += promedioActualUnidad * (unidad.peso / 100);
-          pesoTotalEvaluado += unidad.peso;
-      } else if (pesoUnidadEvaluado > 0) {
-          // Unidad parcialmente evaluada: aporta proporcionalmente
-          // Ejemplo: Unidad vale 40%, evaluado 50% con promedio 6.0 → aporta 6.0 * 0.4 * 0.5 = 1.2 puntos
-          const factorParcial = pesoUnidadEvaluado / 100;
-          acumuladoRamo += promedioActualUnidad * (unidad.peso / 100) * factorParcial;
-          pesoTotalEvaluado += unidad.peso * factorParcial;
+      // Calcular aporte al ramo
+      // La unidad aporta su acumulado multiplicado por el peso de la unidad
+      // Ejemplo: Unidad vale 40%, acumulado 4.5 → aporta 4.5 * 0.4 = 1.8 puntos
+      if (pesoUnidadEvaluado > 0) {
+          acumuladoRamo += acumuladoUnidad * (unidad.peso / 100);
+          pesoTotalEvaluado += (pesoUnidadEvaluado / 100) * unidad.peso;
       }
 
       return {
@@ -49,7 +41,8 @@ export function calcularEstadisticasRamo(ramo, notaAprobacion = 4.0) {
     // acumuladoRamo = puntos acumulados en la nota final
     // pesoTotalEvaluado = % del ramo que está evaluado
 
-    // El promedio que mostramos es el acumulado directo (puntos en escala 1-7)
+    // PROMEDIO ACTUAL: Suma de (promedio de cada unidad × peso de la unidad)
+    // Ejemplo: 6.18×0.2 + 6.45×0.4 + 4.5×0.4 = 5.616
     let promedioActualRamo = acumuladoRamo;
 
     // Cálculo de Nota Necesaria

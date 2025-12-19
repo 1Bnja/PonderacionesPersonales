@@ -42,13 +42,23 @@ export function magicParser(rawText) {
         .trim();
 
       if (nombre.length > 3 && !nombre.match(/^\d+%?$/)) {
+        // Buscar ponderación en las próximas líneas
+        let ponderacionRamo = 100;
+        for (let j = i + 1; j < Math.min(i + 5, lineas.length); j++) {
+          const ponderacionMatch = lineas[j].match(/Ponderaci[oó]n:\s*(\d+)%\s*del\s*ramo/i);
+          if (ponderacionMatch) {
+            ponderacionRamo = parseInt(ponderacionMatch[1]);
+            break;
+          }
+        }
+
         ramoActual = {
           id: crypto.randomUUID(),
           nombre: nombre,
           unidades: [{
             id: crypto.randomUUID(),
             nombre: 'Evaluaciones',
-            peso: 100,
+            peso: ponderacionRamo,
             evaluaciones: []
           }]
         };
