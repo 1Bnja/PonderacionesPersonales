@@ -120,6 +120,33 @@ export default function Dashboard() {
       setExpandedSemesters(prev => ({ ...prev, [semestre]: !prev[semestre] }))
   }
 
+  // FUNCIÓN PARA CREAR RAMO MANUAL
+  const addManualRamo = async (semestre) => {
+    const nuevoRamo = {
+      id: crypto.randomUUID(),
+      nombre: "Nuevo Ramo",
+      semestre: semestre,
+      unidades: [{
+        id: crypto.randomUUID(),
+        nombre: "Evaluaciones",
+        peso: 100,
+        evaluaciones: []
+      }]
+    }
+
+    const ramoConEstadisticas = calcularEstadisticasRamo(nuevoRamo)
+    const nuevaLista = [...ramos, ramoConEstadisticas]
+    setRamos(nuevaLista)
+
+    // Remover de semestres locales si existe
+    if(localSemesters.includes(semestre)) {
+      setLocalSemesters(prev => prev.filter(s => s !== semestre))
+    }
+
+    await saveNotasToCloud(nuevaLista)
+    setToast({ message: "Ramo creado. Haz clic para editarlo.", type: "success" })
+  }
+
   // AGRUPAR Y UNIR SEMESTRES
   const ramosPorSemestre = ramos.reduce((acc, ramo) => {
     const sem = ramo.semestre || "Otros";
@@ -152,9 +179,17 @@ export default function Dashboard() {
         <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
             Modo Azúl
         </h1>
-        <button onClick={handleLogout} className="p-2 hover:bg-slate-800 rounded-full transition">
-            <LogOut className="text-slate-400 w-5 h-5" />
-        </button>
+        <div className="flex gap-3 items-center">
+          <button
+            onClick={() => navigate('/dashboard-nuevo')}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg transition-all flex items-center gap-2"
+          >
+            ✨ Versión con Edición Manual
+          </button>
+          <button onClick={handleLogout} className="p-2 hover:bg-slate-800 rounded-full transition">
+              <LogOut className="text-slate-400 w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
@@ -387,17 +422,29 @@ export default function Dashboard() {
                                         </div>
                                     )}
 
-                                    {/* BOTÓN "IMPORTAR" */}
-                                    <button 
-                                        onClick={(e) => {
-                                            e.stopPropagation(); 
-                                            openImportModal(semestre);
-                                        }}
-                                        className="w-full border border-slate-600 bg-slate-800 hover:bg-blue-600 hover:border-blue-500 hover:text-white text-slate-300 rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm shadow-sm"
-                                    >
-                                        <FileText className="w-4 h-4" />
-                                        Importar Ramos a {semestre}
-                                    </button>
+                                    {/* BOTONES DE ACCIÓN */}
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                openImportModal(semestre);
+                                            }}
+                                            className="flex-1 border border-slate-600 bg-slate-800 hover:bg-blue-600 hover:border-blue-500 hover:text-white text-slate-300 rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm shadow-sm"
+                                        >
+                                            <FileText className="w-4 h-4" />
+                                            Importar desde UTalmatico
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addManualRamo(semestre);
+                                            }}
+                                            className="flex-1 border border-green-600 bg-slate-800 hover:bg-green-600 hover:text-white text-green-400 rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm shadow-sm"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                            Crear Ramo Manual
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>

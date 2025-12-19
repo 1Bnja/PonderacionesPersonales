@@ -33,7 +33,7 @@ export function magicParser(rawText) {
     if (i + 1 < lineas.length &&
         lineas[i + 1].includes('Tipo') &&
         lineas[i + 1].includes('Calidad') &&
-        lineas[i + 1].includes('Fecha de Prueba') &&
+        (lineas[i + 1].includes('Fecha') || lineas[i + 1].includes('Fecha de Prueba')) &&
         !linea.includes('Tipo') &&
         !linea.includes('Evaluación')) {
       let nombre = linea
@@ -188,10 +188,13 @@ export function magicParser(rawText) {
         // PROCESAR LADO DERECHO (NÚMEROS)
         if (partes[1]) {
           const numerosRaw = partes[1].trim();
-          const numeros = numerosRaw.split(/\s+/).filter(n => n.match(/^\d+(\.\d+)?$/));
+          // Normalizamos comas a puntos y filtramos solo lo que parezca número
+          const numeros = numerosRaw.split(/\s+/)
+            .map(n => n.replace(',', '.'))
+            .filter(n => n.match(/^\d+(\.\d+)?$/));
 
           if (numeros.length >= 1) {
-            peso = parseInt(numeros[0]) || 0;
+            peso = parseFloat(numeros[0]) || 0;
           }
           if (numeros.length >= 2) {
             nota = parseFloat(numeros[1]);
