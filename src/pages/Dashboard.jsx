@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { magicParser } from '../utils/magicParser'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
-import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target } from 'lucide-react'
+import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check } from 'lucide-react'
 import Toast from '../components/Toast'
 
 export default function Dashboard() {
@@ -22,6 +22,8 @@ export default function Dashboard() {
   // SEMESTRES
   const [expandedSemesters, setExpandedSemesters] = useState({})
   const [localSemesters, setLocalSemesters] = useState([])
+  const [editingSemester, setEditingSemester] = useState(null)
+  const [editedSemesterName, setEditedSemesterName] = useState('')
 
   // TOAST
   const [toast, setToast] = useState(null)
@@ -114,6 +116,66 @@ export default function Dashboard() {
 
   const toggleSemestre = (semestre) => {
       setExpandedSemesters(prev => ({ ...prev, [semestre]: !prev[semestre] }))
+  }
+
+  const startEditingSemester = (semestre, e) => {
+    e.stopPropagation()
+    setEditingSemester(semestre)
+    setEditedSemesterName(semestre)
+  }
+
+  const saveEditedSemester = async (oldName, e) => {
+    e.stopPropagation()
+    if (!editedSemesterName.trim() || editedSemesterName === oldName) {
+      setEditingSemester(null)
+      return
+    }
+
+    // Actualizar ramos con el nuevo nombre de semestre
+    const nuevaLista = ramos.map(r => 
+      r.semestre === oldName ? { ...r, semestre: editedSemesterName } : r
+    )
+    
+    // Actualizar localSemesters
+    if (localSemesters.includes(oldName)) {
+      setLocalSemesters(prev => prev.map(s => s === oldName ? editedSemesterName : s))
+    }
+    
+    // Actualizar expandedSemesters
+    const wasExpanded = expandedSemesters[oldName]
+    setExpandedSemesters(prev => {
+      const newState = { ...prev }
+      delete newState[oldName]
+      if (wasExpanded) newState[editedSemesterName] = true
+      return newState
+    })
+
+    setRamos(nuevaLista)
+    await saveNotasToCloud(nuevaLista)
+    setEditingSemester(null)
+    setToast({ message: "Semestre renombrado", type: "success" })
+  }
+
+  const deleteSemester = async (semestre, e) => {
+    e.stopPropagation()
+    if (!confirm(`¿Eliminar el semestre "${semestre}" y todos sus ramos?`)) return
+
+    // Eliminar todos los ramos de este semestre
+    const nuevaLista = ramos.filter(r => r.semestre !== semestre)
+    
+    // Eliminar de localSemesters
+    setLocalSemesters(prev => prev.filter(s => s !== semestre))
+    
+    // Eliminar de expandedSemesters
+    setExpandedSemesters(prev => {
+      const newState = { ...prev }
+      delete newState[semestre]
+      return newState
+    })
+
+    setRamos(nuevaLista)
+    await saveNotasToCloud(nuevaLista)
+    setToast({ message: "Semestre eliminado", type: "info" })
   }
 
   // FUNCIÓN PARA CREAR RAMO MANUAL
@@ -364,19 +426,64 @@ export default function Dashboard() {
                                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-800 transition-colors select-none group"
                                 onClick={() => toggleSemestre(semestre)}
                             >
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 flex-1">
                                     <div className={`p-2 rounded-lg transition-colors ${isOpen ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 group-hover:text-white'}`}>
                                         {isOpen ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                                     </div>
-                                    <div>
-                                        <h2 className="text-lg md:text-xl font-bold text-slate-200">{semestre}</h2>
-                                        <p className="text-xs text-slate-500">
-                                            {count === 0 ? "Carpeta vacía" : `${count} ramos`}
-                                        </p>
+                                    <div className="flex-1">
+                                        {editingSemester === semestre ? (
+                                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                                                <input
+                                                    type="text"
+                                                    value={editedSemesterName}
+                                                    onChange={(e) => setEditedSemesterName(e.target.value)}
+                                                    onKeyDown={(e) => e.key === 'Enter' && saveEditedSemester(semestre, e)}
+                                                    className="bg-slate-900 border border-blue-500 rounded-lg px-3 py-1 text-white text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    autoFocus
+                                                />
+                                                <button
+                                                    onClick={(e) => saveEditedSemester(semestre, e)}
+                                                    className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                                                >
+                                                    <Check className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setEditingSemester(null); }}
+                                                    className="p-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <div>
+                                                    <h2 className="text-lg md:text-xl font-bold text-slate-200">{semestre}</h2>
+                                                    <p className="text-xs text-slate-500">
+                                                        {count === 0 ? "Carpeta vacía" : `${count} ramos`}
+                                                    </p>
+                                                </div>
+                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                                                    <button
+                                                        onClick={(e) => startEditingSemester(semestre, e)}
+                                                        className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-500 hover:text-blue-400"
+                                                        title="Editar nombre"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => deleteSemester(semestre, e)}
+                                                        className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-500 hover:text-red-400"
+                                                        title="Eliminar semestre"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-3">
                                     {count > 0 && (
                                         <div className="text-right hidden md:block">
                                             <span className="block text-[10px] text-slate-500 uppercase font-bold">Promedio</span>
