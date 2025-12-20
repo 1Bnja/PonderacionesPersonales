@@ -96,10 +96,6 @@ export default function Dashboard() {
     setInputText('')
     setIsImporting(false)
 
-    if(localSemesters.includes(targetSemester)) {
-        setLocalSemesters(prev => prev.filter(s => s !== targetSemester))
-    }
-
     await saveNotasToCloud(nuevaLista)
     setToast({ message: `${ramosProcesados.length} ramo(s) importado(s) exitosamente`, type: "success" })
   }
@@ -137,11 +133,6 @@ export default function Dashboard() {
     const ramoConEstadisticas = calcularEstadisticasRamo(nuevoRamo)
     const nuevaLista = [...ramos, ramoConEstadisticas]
     setRamos(nuevaLista)
-
-    // Remover de semestres locales si existe
-    if(localSemesters.includes(semestre)) {
-      setLocalSemesters(prev => prev.filter(s => s !== semestre))
-    }
 
     await saveNotasToCloud(nuevaLista)
     setToast({ message: "Ramo creado. Haz clic para editarlo.", type: "success" })
