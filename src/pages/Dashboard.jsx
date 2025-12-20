@@ -220,10 +220,10 @@ export default function Dashboard() {
       ...localSemesters
   ])].sort().reverse();
 
-  if (loading) return <div className="p-10 text-center text-white">Cargando...</div>
+  if (loading) return <div className="min-h-screen bg-[#1A1F2E] flex items-center justify-center"><div className="text-center text-[#E2E8F0] text-lg font-medium">Cargando...</div></div>
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-4 md:p-8 relative">
+    <div className="min-h-screen bg-[#1A1F2E] text-[#E2E8F0] p-4 md:p-8 relative">
 
       {/* TOAST NOTIFICATION */}
       {toast && (
@@ -236,29 +236,29 @@ export default function Dashboard() {
 
       {/* MODAL DE CONFIRMACIÓN DE ELIMINACIÓN */}
       {deletingConfirmation && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-slate-800 p-6 rounded-2xl border border-red-700 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-[#242B3D] p-6 rounded-2xl border border-red-500/30 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-start gap-4 mb-6">
-              <div className="p-3 bg-red-600/20 rounded-lg">
+              <div className="p-3 bg-red-500/20 rounded-lg">
                 <AlertCircle className="w-6 h-6 text-red-400" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-lg text-white mb-2">¿Eliminar semestre?</h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Estás a punto de eliminar el semestre <span className="font-bold text-white">"{deletingConfirmation}"</span> y todos sus ramos. Esta acción no se puede deshacer.
+                <h3 className="font-bold text-lg text-[#E2E8F0] mb-2">¿Eliminar semestre?</h3>
+                <p className="text-sm text-[#94A3B8] leading-relaxed">
+                  Estás a punto de eliminar el semestre <span className="font-bold text-[#E2E8F0]">"{deletingConfirmation}"</span> y todos sus ramos. Esta acción no se puede deshacer.
                 </p>
               </div>
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeletingConfirmation(null)}
-                className="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-lg font-bold transition-colors"
+                className="flex-1 bg-[#2E3648] hover:bg-[#3A4357] text-[#E2E8F0] py-2.5 rounded-lg font-bold transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDeleteSemester}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg font-bold transition-colors"
+                className="flex-1 bg-red-500/90 hover:bg-red-500 text-white py-2.5 rounded-lg font-bold transition-colors"
               >
                 Eliminar
               </button>
@@ -269,60 +269,60 @@ export default function Dashboard() {
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-8 max-w-5xl mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
+        <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7AA7EC] to-[#9BC7F0]">
             Modo Azúl
         </h1>
-        <button onClick={handleLogout} className="p-2 hover:bg-slate-800 rounded-full transition">
-            <LogOut className="text-slate-400 w-5 h-5" />
+        <button onClick={handleLogout} className="p-2 hover:bg-[#242B3D] rounded-full transition">
+            <LogOut className="text-[#94A3B8] hover:text-[#E2E8F0] w-5 h-5 transition-colors" />
         </button>
       </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
 
         {/* SECCIÓN EXPLICATIVA */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+        <div className="bg-[#242B3D] border border-[#2E3648] rounded-2xl p-6 shadow-lg">
           <div className="flex items-start gap-4">
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-white mb-2">¿Qué es Modo Azúl?</h2>
-              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                Es tu calculadora inteligente de notas universitarias. Importa directamente desde UTalmatico, 
-                calcula automáticamente tus promedios ponderados y descubre qué nota necesitas en tus evaluaciones 
+              <h2 className="text-xl font-bold text-[#E2E8F0] mb-2">¿Qué es Modo Azúl?</h2>
+              <p className="text-[#94A3B8] text-sm mb-6 leading-relaxed">
+                Es tu calculadora inteligente de notas universitarias. Importa directamente desde UTalmatico,
+                calcula automáticamente tus promedios ponderados y descubre qué nota necesitas en tus evaluaciones
                 pendientes para aprobar cada ramo.
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-blue-500/10 rounded-lg">
-                        <ClipboardList className="w-5 h-5 text-blue-400" />
+                    <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
+                        <ClipboardList className="w-5 h-5 text-[#7AA7EC]" />
                     </div>
-                    <h3 className="font-bold text-slate-200 text-sm">1. Importa</h3>
+                    <h3 className="font-bold text-[#E2E8F0] text-sm">1. Importa</h3>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-[#94A3B8] leading-relaxed">
                     Copia y pega tus notas desde UTalmatico. El sistema detecta automáticamente ramos, evaluaciones y ponderaciones.
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-green-500/10 rounded-lg">
-                        <BarChart3 className="w-5 h-5 text-green-400" />
+                    <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
+                        <BarChart3 className="w-5 h-5 text-[#7AA7EC]" />
                     </div>
-                    <h3 className="font-bold text-slate-200 text-sm">2. Visualiza</h3>
+                    <h3 className="font-bold text-[#E2E8F0] text-sm">2. Visualiza</h3>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-[#94A3B8] leading-relaxed">
                     Organiza tus ramos por semestres. Ve tu promedio actual, progreso y estado de cada ramo en tiempo real.
                   </p>
                 </div>
 
-                <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-purple-500/10 rounded-lg">
-                        <Target className="w-5 h-5 text-purple-400" />
+                    <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
+                        <Target className="w-5 h-5 text-[#7AA7EC]" />
                     </div>
-                    <h3 className="font-bold text-slate-200 text-sm">3. Planifica</h3>
+                    <h3 className="font-bold text-[#E2E8F0] text-sm">3. Planifica</h3>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-[#94A3B8] leading-relaxed">
                     Calcula la nota mínima que necesitas en las evaluaciones restantes. Simula diferentes escenarios.
                   </p>
                 </div>
@@ -333,9 +333,9 @@ export default function Dashboard() {
         
         {/* BOTÓN CREAR SEMESTRE */}
         <div className="flex justify-end">
-            <button 
+            <button
                 onClick={openCreateModal}
-                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 px-4 py-2 rounded-lg font-medium transition-all text-sm shadow-sm"
+                className="flex items-center gap-2 bg-[#7AA7EC] hover:bg-[#6A96DB] text-white px-4 py-2 rounded-lg font-medium transition-all text-sm shadow-sm"
             >
                 <FolderPlus className="w-4 h-4" /> Nuevo Semestre
             </button>
@@ -345,36 +345,36 @@ export default function Dashboard() {
         {/* MODAL 1: CREAR SEMESTRE (NUEVO DISEÑO)      */}
         {/* ------------------------------------------- */}
         {isCreating && (
-             <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-                <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+             <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+                <div className="bg-[#242B3D] p-6 rounded-2xl border border-[#2E3648] w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-lg text-white">Nueva Carpeta</h3>
-                        <button onClick={() => setIsCreating(false)} className="text-slate-400 hover:text-white">
+                        <h3 className="font-bold text-lg text-[#E2E8F0]">Nueva Carpeta</h3>
+                        <button onClick={() => setIsCreating(false)} className="text-[#94A3B8] hover:text-[#E2E8F0]">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
 
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nombre del Semestre</label>
-                    <input 
+                    <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
+                    <input
                         autoFocus
-                        type="text" 
+                        type="text"
                         value={newSemesterName}
                         onChange={(e) => setNewSemesterName(e.target.value)}
                         placeholder="Ej: 2/2026"
-                        className="w-full bg-slate-900 border border-slate-600 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-blue-500 outline-none mb-6"
+                        className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-3 px-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] outline-none mb-6"
                         onKeyDown={(e) => e.key === 'Enter' && handleSaveNewSemester()}
                     />
-                    
+
                     <div className="flex gap-3">
-                        <button 
+                        <button
                             onClick={handleSaveNewSemester}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-bold transition-colors"
+                            className="flex-1 bg-[#7AA7EC] hover:bg-[#6A96DB] text-white py-2.5 rounded-lg font-bold transition-colors"
                         >
                             Crear
                         </button>
-                        <button 
+                        <button
                             onClick={() => setIsCreating(false)}
-                            className="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-lg font-bold transition-colors"
+                            className="flex-1 bg-[#2E3648] hover:bg-[#3A4357] text-[#E2E8F0] py-2.5 rounded-lg font-bold transition-colors"
                         >
                             Cancelar
                         </button>
@@ -387,48 +387,48 @@ export default function Dashboard() {
         {/* MODAL 2: IMPORTAR RAMOS                   */}
         {/* ------------------------------------------- */}
         {isImporting && (
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-                <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 w-full max-w-lg shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+                <div className="bg-[#242B3D] p-6 rounded-2xl border border-[#2E3648] w-full max-w-lg shadow-2xl animate-in zoom-in-95 duration-200">
                     <div className="flex justify-between items-center mb-4">
                         <div>
-                            <h3 className="font-bold text-lg text-white">Importar Ramos</h3>
-                            <p className="text-sm text-blue-400 font-medium">Destino: {targetSemester}</p>
+                            <h3 className="font-bold text-lg text-[#E2E8F0]">Importar Ramos</h3>
+                            <p className="text-sm text-[#7AA7EC] font-medium">Destino: {targetSemester}</p>
                         </div>
-                        <button onClick={() => setIsImporting(false)} className="text-slate-400 hover:text-white">
+                        <button onClick={() => setIsImporting(false)} className="text-[#94A3B8] hover:text-[#E2E8F0]">
                             <X className="w-5 h-5" />
                         </button>
                     </div>
 
-                    <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50 mb-4 space-y-3">
+                    <div className="bg-[#1A1F2E] p-4 rounded-lg border border-[#2E3648] mb-4 space-y-3">
                         <div className="flex items-start gap-2">
-                            <span className="text-blue-400 font-bold text-sm shrink-0">📋</span>
-                            <div className="text-xs text-slate-300 space-y-1">
-                                <p className="font-semibold text-white">Instrucciones:</p>
-                                <ol className="list-decimal list-inside space-y-1 text-slate-400">
-                                    <li>Entra a <span className="font-mono text-blue-400">UTalmatico</span> → <span className="font-mono text-blue-400">Notas Parciales</span></li>
+                            <span className="text-[#7AA7EC] font-bold text-sm shrink-0">📋</span>
+                            <div className="text-xs text-[#E2E8F0] space-y-1">
+                                <p className="font-semibold text-[#E2E8F0]">Instrucciones:</p>
+                                <ol className="list-decimal list-inside space-y-1 text-[#94A3B8]">
+                                    <li>Entra a <span className="font-mono text-[#7AA7EC]">UTalmatico</span> → <span className="font-mono text-[#7AA7EC]">Notas Parciales</span></li>
                                     <li>Selecciona tu ramo</li>
-                                    <li>Copia <strong className="text-white">desde el nombre del ramo</strong> hasta la última evaluación (incluye todo)</li>
+                                    <li>Copia <strong className="text-[#E2E8F0]">desde el nombre del ramo</strong> hasta la última evaluación (incluye todo)</li>
                                     <li>Pega el contenido abajo</li>
                                 </ol>
                             </div>
                         </div>
                         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded px-2 py-1.5">
-                            <p className="text-xs text-yellow-300">
+                            <p className="text-xs text-yellow-400">
                                 💡 <strong>Tip:</strong> Selecciona arrastrando desde el título hasta el final de la tabla
                             </p>
                         </div>
                     </div>
 
-                    <textarea 
+                    <textarea
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
                         placeholder="Pegar contenido aquí..."
-                        className="w-full h-40 bg-slate-900 border border-slate-600 rounded-lg p-3 text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none mb-4"
+                        className="w-full h-40 bg-[#1A1F2E] border border-[#2E3648] rounded-lg p-3 text-xs font-mono text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] outline-none mb-4"
                     />
-                    
-                    <button 
+
+                    <button
                         onClick={handleMagicPaste}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors"
+                        className="w-full bg-[#7AA7EC] hover:bg-[#6A96DB] text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors"
                     >
                         <Save className="w-4 h-4" /> Procesar y Guardar
                     </button>
@@ -439,11 +439,11 @@ export default function Dashboard() {
 
         {/* LISTA DE SEMESTRES */}
         {todosLosSemestres.length === 0 ? (
-            <div className="text-center py-20 bg-slate-800/30 rounded-3xl border-2 border-dashed border-slate-800">
-                <Calculator className="w-16 h-16 mx-auto text-slate-700 mb-4" />
-                <h3 className="text-xl font-semibold text-slate-400">Sin semestres</h3>
-                <p className="text-slate-600 mt-2 mb-4">Crea tu primer semestre para empezar.</p>
-                <button onClick={openCreateModal} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors">
+            <div className="text-center py-20 bg-[#242B3D] rounded-3xl border-2 border-dashed border-[#2E3648]">
+                <Calculator className="w-16 h-16 mx-auto text-[#94A3B8] mb-4" />
+                <h3 className="text-xl font-semibold text-[#E2E8F0]">Sin semestres</h3>
+                <p className="text-[#94A3B8] mt-2 mb-4">Crea tu primer semestre para empezar.</p>
+                <button onClick={openCreateModal} className="bg-[#7AA7EC] hover:bg-[#6A96DB] text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors">
                     + Crear Semestre
                 </button>
             </div>
@@ -459,15 +459,15 @@ export default function Dashboard() {
                         : 0;
 
                     return (
-                        <div key={semestre} className="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden transition-all">
-                            
+                        <div key={semestre} className="bg-[#242B3D] rounded-2xl border border-[#2E3648] overflow-hidden transition-all shadow-lg">
+
                             {/* CABECERA DEL SEMESTRE */}
-                            <div 
-                                className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-800 transition-colors select-none group"
+                            <div
+                                className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#2A3142] transition-colors select-none group"
                                 onClick={() => toggleSemestre(semestre)}
                             >
                                 <div className="flex items-center gap-3 flex-1">
-                                    <div className={`p-2 rounded-lg transition-colors ${isOpen ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400 group-hover:text-white'}`}>
+                                    <div className={`p-2 rounded-lg transition-colors ${isOpen ? 'bg-[#7AA7EC] text-white' : 'bg-[#2E3648] text-[#94A3B8] group-hover:text-[#E2E8F0]'}`}>
                                         {isOpen ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                                     </div>
                                     <div className="flex-1">
@@ -478,18 +478,18 @@ export default function Dashboard() {
                                                     value={editedSemesterName}
                                                     onChange={(e) => setEditedSemesterName(e.target.value)}
                                                     onKeyDown={(e) => e.key === 'Enter' && saveEditedSemester(semestre, e)}
-                                                    className="bg-slate-900 border border-blue-500 rounded-lg px-3 py-1 text-white text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="bg-[#1A1F2E] border border-[#7AA7EC] rounded-lg px-3 py-1 text-[#E2E8F0] text-lg font-bold focus:outline-none focus:ring-2 focus:ring-[#7AA7EC]"
                                                     autoFocus
                                                 />
                                                 <button
                                                     onClick={(e) => saveEditedSemester(semestre, e)}
-                                                    className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                                                    className="p-2 bg-green-500/90 hover:bg-green-500 text-white rounded-lg transition-colors"
                                                 >
                                                     <Check className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); setEditingSemester(null); }}
-                                                    className="p-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+                                                    className="p-2 bg-[#2E3648] hover:bg-[#3A4357] text-[#E2E8F0] rounded-lg transition-colors"
                                                 >
                                                     <X className="w-4 h-4" />
                                                 </button>
@@ -497,22 +497,22 @@ export default function Dashboard() {
                                         ) : (
                                             <div className="flex items-center gap-2">
                                                 <div>
-                                                    <h2 className="text-lg md:text-xl font-bold text-slate-200">{semestre}</h2>
-                                                    <p className="text-xs text-slate-500">
+                                                    <h2 className="text-lg md:text-xl font-bold text-[#E2E8F0]">{semestre}</h2>
+                                                    <p className="text-xs text-[#94A3B8]">
                                                         {count === 0 ? "Carpeta vacía" : `${count} ramos`}
                                                     </p>
                                                 </div>
                                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
                                                     <button
                                                         onClick={(e) => startEditingSemester(semestre, e)}
-                                                        className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-500 hover:text-blue-400"
+                                                        className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-[#7AA7EC]"
                                                         title="Editar nombre"
                                                     >
                                                         <Edit2 className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={(e) => deleteSemester(semestre, e)}
-                                                        className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-500 hover:text-red-400"
+                                                        className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-red-400"
                                                         title="Eliminar semestre"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -526,7 +526,7 @@ export default function Dashboard() {
                                 <div className="flex items-center gap-3">
                                     {count > 0 && (
                                         <div className="text-right hidden md:block">
-                                            <span className="block text-[10px] text-slate-500 uppercase font-bold">Promedio</span>
+                                            <span className="block text-[10px] text-[#94A3B8] uppercase font-bold">Promedio</span>
                                             <span className={`font-bold ${promedioSemestre >= 4.0 ? 'text-green-400' : 'text-red-400'}`}>
                                                 {promedioSemestre.toFixed(1)}
                                             </span>
@@ -537,8 +537,8 @@ export default function Dashboard() {
 
                             {/* CONTENIDO DESPLEGABLE */}
                             {isOpen && (
-                                <div className="p-6 border-t border-slate-700 bg-slate-900/30 animate-in fade-in slide-in-from-top-2">
-                                    
+                                <div className="p-6 border-t border-[#2E3648] bg-[#1A1F2E] animate-in fade-in slide-in-from-top-2">
+
                                     {/* GRID DE RAMOS */}
                                     {count > 0 ? (
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -547,7 +547,7 @@ export default function Dashboard() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="text-center py-8 text-slate-500 text-sm italic border-2 border-dashed border-slate-800 rounded-xl mb-6">
+                                        <div className="text-center py-8 text-[#94A3B8] text-sm italic border-2 border-dashed border-[#2E3648] rounded-xl mb-6 bg-[#242B3D]">
                                             Esta carpeta está vacía. Importa tus ramos.
                                         </div>
                                     )}
@@ -559,7 +559,7 @@ export default function Dashboard() {
                                                 e.stopPropagation();
                                                 openImportModal(semestre);
                                             }}
-                                            className="flex-1 border border-slate-600 bg-slate-800 hover:bg-blue-600 hover:border-blue-500 hover:text-white text-slate-300 rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm shadow-sm"
+                                            className="flex-1 border border-[#2E3648] bg-[#242B3D] hover:bg-[#7AA7EC] hover:border-[#7AA7EC] hover:text-white text-[#E2E8F0] rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm"
                                         >
                                             <FileText className="w-4 h-4" />
                                             Importar desde UTalmatico
@@ -569,7 +569,7 @@ export default function Dashboard() {
                                                 e.stopPropagation();
                                                 addManualRamo(semestre);
                                             }}
-                                            className="flex-1 border border-green-600 bg-slate-800 hover:bg-green-600 hover:text-white text-green-400 rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm shadow-sm"
+                                            className="flex-1 border border-[#7AA7EC] bg-[#242B3D] hover:bg-[#7AA7EC] hover:text-white text-[#7AA7EC] rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm"
                                         >
                                             <Plus className="w-4 h-4" />
                                             Crear Ramo Manual
@@ -593,20 +593,20 @@ function RamoCard({ ramo, onDelete }) {
     const nota = estadisticas.promedioActual
     const aprobado = nota >= 4.0
 
-    let badgeColor = "bg-slate-600"
-    if (estadisticas.estado === "APROBADO") badgeColor = "bg-green-500"
-    if (estadisticas.estado === "REPROBADO") badgeColor = "bg-red-500"
-    if (estadisticas.estado === "CRÍTICO") badgeColor = "bg-orange-500"
-    if (estadisticas.estado === "EN CURSO") badgeColor = "bg-blue-600"
+    let badgeColor = "bg-[#94A3B8]/50"
+    if (estadisticas.estado === "APROBADO") badgeColor = "bg-green-500/90"
+    if (estadisticas.estado === "REPROBADO") badgeColor = "bg-red-500/90"
+    if (estadisticas.estado === "CRÍTICO") badgeColor = "bg-orange-500/90"
+    if (estadisticas.estado === "EN CURSO") badgeColor = "bg-[#7AA7EC]/90"
 
     return (
-        <div 
-            onClick={() => navigate(`/ramo/${ramo.id}`)} 
-            className="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 relative group cursor-pointer"
+        <div
+            onClick={() => navigate(`/ramo/${ramo.id}`)}
+            className="bg-[#242B3D] rounded-2xl p-5 border border-[#2E3648] shadow-lg hover:shadow-xl hover:border-[#7AA7EC]/50 transition-all hover:-translate-y-1 relative group cursor-pointer"
         >
-            <button 
+            <button
                 onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                className="absolute top-4 right-4 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity z-10 p-1 hover:bg-slate-900 rounded"
+                className="absolute top-4 right-4 text-[#94A3B8] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity z-10 p-1 hover:bg-[#2E3648] rounded"
                 title="Eliminar ramo"
             >
                 <Trash2 className="w-4 h-4" />
@@ -616,42 +616,42 @@ function RamoCard({ ramo, onDelete }) {
                 {estadisticas.estado}
             </div>
 
-            <h3 className="text-lg font-bold text-white mb-1 truncate pr-6" title={ramo.nombre}>
+            <h3 className="text-lg font-bold text-[#E2E8F0] mb-1 truncate pr-6" title={ramo.nombre}>
                 {ramo.nombre}
             </h3>
-            
+
             <div className="flex items-end gap-2 mb-4">
                 <span className={`text-4xl font-bold tracking-tighter ${aprobado ? 'text-green-400' : 'text-red-400'}`}>
                     {nota.toFixed(1)}
                 </span>
-                <span className="text-slate-500 text-xs font-medium mb-1.5 uppercase">Promedio</span>
+                <span className="text-[#94A3B8] text-xs font-medium mb-1.5 uppercase">Promedio</span>
             </div>
 
             <div className="mb-4">
-                <div className="flex justify-between text-[10px] uppercase font-bold text-slate-500 mb-1">
+                <div className="flex justify-between text-[10px] uppercase font-bold text-[#94A3B8] mb-1">
                     <span>Progreso</span>
                     <span>{estadisticas.pesoEvaluado}%</span>
                 </div>
-                <div className="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
-                    <div 
-                        className={`h-full rounded-full transition-all duration-1000 ${aprobado ? 'bg-green-500' : 'bg-blue-500'}`}
+                <div className="w-full bg-[#1A1F2E] rounded-full h-1.5 overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-1000 ${aprobado ? 'bg-green-400' : 'bg-[#7AA7EC]'}`}
                         style={{ width: `${estadisticas.pesoEvaluado}%` }}
                     ></div>
                 </div>
             </div>
 
-            <div className="bg-slate-900/50 rounded-lg p-3 text-sm border border-slate-800/50">
+            <div className="bg-[#1A1F2E] rounded-lg p-3 text-sm border border-[#2E3648]">
                 {estadisticas.notaNecesaria > 0 ? (
                     <div className="flex items-start gap-2">
                         <AlertCircle className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
-                        <span className="text-slate-400 text-xs leading-relaxed">
-                            Meta: <strong className="text-white text-sm">{estadisticas.notaNecesaria}</strong> en el {100 - estadisticas.pesoEvaluado}% restante.
+                        <span className="text-[#94A3B8] text-xs leading-relaxed">
+                            Meta: <strong className="text-[#E2E8F0] text-sm">{estadisticas.notaNecesaria}</strong> en el {100 - estadisticas.pesoEvaluado}% restante.
                         </span>
                     </div>
                 ) : (
                     <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-slate-400 text-xs">¡Ramo finalizado!</span>
+                        <CheckCircle className="w-4 h-4 text-green-400" />
+                        <span className="text-[#94A3B8] text-xs">¡Ramo finalizado!</span>
                     </div>
                 )}
             </div>

@@ -47,38 +47,38 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-700">
+      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#2E3648]">
 
         {/* Botón Volver */}
         <Link
           to="/login"
-          className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors text-sm"
+          className="flex items-center gap-2 text-[#94A3B8] hover:text-[#E2E8F0] mb-6 transition-colors text-sm"
         >
           <ArrowLeft className="w-4 h-4" /> Volver al inicio
         </Link>
 
         {/* Logo y Título */}
         <div className="text-center mb-8">
-          <div className="bg-blue-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <div className="bg-[#7AA7EC] w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4">
             <BookOpen className="text-white w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Crear Cuenta</h1>
-          <p className="text-slate-400 mt-2">Únete a Modo Azúl</p>
+          <h1 className="text-2xl font-bold text-[#E2E8F0]">Crear Cuenta</h1>
+          <p className="text-[#94A3B8] mt-2">Únete a Modo Azúl</p>
         </div>
 
         {/* Formulario */}
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Correo</label>
+            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 text-slate-500 w-5 h-5" />
+              <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
               <input
                 type="email"
                 placeholder="correo@ejemplo.com"
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -87,13 +87,13 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 text-slate-500 w-5 h-5" />
+              <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
               <input
                 type="password"
                 placeholder="Mínimo 6 caracteres"
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -103,13 +103,13 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">Confirmar Contraseña</label>
+            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Confirmar Contraseña</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 text-slate-500 w-5 h-5" />
+              <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
               <input
                 type="password"
                 placeholder="Repite tu contraseña"
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -121,7 +121,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors flex justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#7AA7EC] hover:bg-[#6A96DB] text-white font-semibold py-3 rounded-lg transition-colors flex justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Creando cuenta...' : 'Registrarse'}
           </button>
@@ -129,11 +129,11 @@ export default function Register() {
 
         {/* Link a Login */}
         <div className="mt-6 text-center">
-          <p className="text-slate-400 text-sm">
+          <p className="text-[#94A3B8] text-sm">
             ¿Ya tienes cuenta?{' '}
             <Link
               to="/login"
-              className="text-blue-400 hover:text-blue-300 font-medium hover:underline"
+              className="text-[#7AA7EC] hover:text-[#9BC7F0] font-medium hover:underline"
             >
               Inicia sesión aquí
             </Link>

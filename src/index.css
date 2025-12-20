@@ -1,6 +1,23 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@300;400;700&display=swap');
 
-/* Un fondo oscuro suave para que no canse la vista */
+/* Paleta Modern Tech - Versión Oscura Minimalista */
+:root {
+  --color-primary: #7AA7EC;        /* Azul pastel luminoso */
+  --color-accent: #9BC7F0;         /* Celeste pastel claro */
+  --color-background: #1A1F2E;     /* Azul oscuro profundo */
+  --color-surface: #242B3D;        /* Superficie oscura con tinte azul */
+  --color-border: #2E3648;         /* Bordes sutiles */
+  --color-text: #E2E8F0;           /* Texto claro suave */
+  --color-text-muted: #94A3B8;     /* Texto secundario */
+}
+
+/* Configuración global */
 body {
-  @apply bg-slate-900 text-slate-100;
+  @apply bg-[#1A1F2E] text-[#E2E8F0];
+  font-family: 'Lato', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
 }
