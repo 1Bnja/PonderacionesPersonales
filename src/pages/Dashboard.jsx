@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [localSemesters, setLocalSemesters] = useState([])
   const [editingSemester, setEditingSemester] = useState(null)
   const [editedSemesterName, setEditedSemesterName] = useState('')
+  const [deletingConfirmation, setDeletingConfirmation] = useState(null)
 
   // TOAST
   const [toast, setToast] = useState(null)
@@ -158,7 +159,12 @@ export default function Dashboard() {
 
   const deleteSemester = async (semestre, e) => {
     e.stopPropagation()
-    if (!confirm(`¿Eliminar el semestre "${semestre}" y todos sus ramos?`)) return
+    setDeletingConfirmation(semestre)
+  }
+
+  const confirmDeleteSemester = async () => {
+    const semestre = deletingConfirmation
+    if (!semestre) return
 
     // Eliminar todos los ramos de este semestre
     const nuevaLista = ramos.filter(r => r.semestre !== semestre)
@@ -175,6 +181,7 @@ export default function Dashboard() {
 
     setRamos(nuevaLista)
     await saveNotasToCloud(nuevaLista)
+    setDeletingConfirmation(null)
     setToast({ message: "Semestre eliminado", type: "info" })
   }
 
@@ -225,6 +232,39 @@ export default function Dashboard() {
           type={toast.type}
           onClose={() => setToast(null)}
         />
+      )}
+
+      {/* MODAL DE CONFIRMACIÓN DE ELIMINACIÓN */}
+      {deletingConfirmation && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-slate-800 p-6 rounded-2xl border border-red-700 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 bg-red-600/20 rounded-lg">
+                <AlertCircle className="w-6 h-6 text-red-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg text-white mb-2">¿Eliminar semestre?</h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  Estás a punto de eliminar el semestre <span className="font-bold text-white">"{deletingConfirmation}"</span> y todos sus ramos. Esta acción no se puede deshacer.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeletingConfirmation(null)}
+                className="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2.5 rounded-lg font-bold transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDeleteSemester}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg font-bold transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* HEADER */}
