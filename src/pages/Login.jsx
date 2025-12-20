@@ -48,7 +48,7 @@ export default function Login() {
               <Mail className="absolute left-3 top-3 text-slate-500 w-5 h-5" />
               <input 
                 type="email" 
-                placeholder="alumno@utalca.cl"
+                placeholder="correo@ejemplo.com"
                 className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
