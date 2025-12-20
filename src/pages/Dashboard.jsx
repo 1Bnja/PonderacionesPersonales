@@ -179,17 +179,9 @@ export default function Dashboard() {
         <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
             Modo Azúl
         </h1>
-        <div className="flex gap-3 items-center">
-          <button
-            onClick={() => navigate('/dashboard-nuevo')}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg transition-all flex items-center gap-2"
-          >
-            ✨ Versión con Edición Manual
-          </button>
-          <button onClick={handleLogout} className="p-2 hover:bg-slate-800 rounded-full transition">
-              <LogOut className="text-slate-400 w-5 h-5" />
-          </button>
-        </div>
+        <button onClick={handleLogout} className="p-2 hover:bg-slate-800 rounded-full transition">
+            <LogOut className="text-slate-400 w-5 h-5" />
+        </button>
       </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
