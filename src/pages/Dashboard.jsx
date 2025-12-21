@@ -398,30 +398,6 @@ export default function Dashboard() {
                                 <h3 className="font-bold text-lg text-[#E2E8F0]">Importar Ramos</h3>
                                 <p className="text-sm text-[#7AA7EC] font-medium">Destino: {targetSemester}</p>
                             </div>
-                            <div 
-                                className="relative"
-                                onMouseEnter={() => setShowHelpTooltip(true)}
-                                onMouseLeave={() => setShowHelpTooltip(false)}
-                            >
-                                <button className="p-1 hover:bg-[#2E3648] rounded-full transition-colors">
-                                    <HelpCircle className="w-5 h-5 text-[#7AA7EC] hover:text-[#6A96DB] cursor-help transition-colors" />
-                                </button>
-                                
-                                {showHelpTooltip && (
-                                    <div className="absolute left-full ml-2 top-0 z-50 animate-in fade-in slide-in-from-left-2 duration-200">
-                                        <div className="bg-[#1A1F2E] border-2 border-[#7AA7EC] rounded-xl shadow-2xl overflow-hidden">
-                                            <div className="p-3 bg-[#242B3D] border-b border-[#2E3648]">
-                                                <p className="text-sm font-bold text-[#7AA7EC]">📖 Guía Visual de Importación</p>
-                                            </div>
-                                            <img 
-                                                src="/ayuda.gif" 
-                                                alt="Guía de importación desde UTalmatico" 
-                                                className="w-[500px] max-w-none"
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
                         </div>
                         <button onClick={() => setIsImporting(false)} className="text-[#94A3B8] hover:text-[#E2E8F0]">
                             <X className="w-5 h-5" />
@@ -438,8 +414,31 @@ export default function Dashboard() {
                                     <li>Copia <strong className="text-[#E2E8F0]">desde el nombre del ramo</strong> hasta la última evaluación (incluye todo)</li>
                                     <li>Pega el contenido abajo</li>
                                 </ol>
+                                <div className="mt-2 pt-2 border-t border-[#2E3648]">
+                                    <button
+                                        onClick={() => setShowHelpTooltip(!showHelpTooltip)}
+                                        className="font-bold text-[#7AA7EC] hover:text-[#6A96DB] hover:underline cursor-pointer transition-all"
+                                    >
+                                        Ejemplo demo
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        
+                        {showHelpTooltip && (
+                            <div className="mt-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="bg-[#242B3D] border-2 border-[#7AA7EC] rounded-xl shadow-2xl overflow-hidden">
+                                    <div className="p-3 bg-[#1A1F2E] border-b border-[#2E3648]">
+                                        <p className="text-sm font-bold text-[#7AA7EC]">Guía Visual de Importación</p>
+                                    </div>
+                                    <img 
+                                        src="/ayuda.gif" 
+                                        alt="Guía de importación desde UTalmatico" 
+                                        className="w-full"
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <textarea
