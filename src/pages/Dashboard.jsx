@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { magicParser } from '../utils/magicParser'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
-import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check } from 'lucide-react'
+import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle } from 'lucide-react'
 import Toast from '../components/Toast'
 
 export default function Dashboard() {
@@ -28,6 +28,9 @@ export default function Dashboard() {
 
   // TOAST
   const [toast, setToast] = useState(null)
+  
+  // TOOLTIP AYUDA
+  const [showHelpTooltip, setShowHelpTooltip] = useState(false)
 
   const navigate = useNavigate()
 
@@ -390,9 +393,35 @@ export default function Dashboard() {
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                 <div className="bg-[#242B3D] p-6 rounded-2xl border border-[#2E3648] w-full max-w-lg shadow-2xl animate-in zoom-in-95 duration-200">
                     <div className="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 className="font-bold text-lg text-[#E2E8F0]">Importar Ramos</h3>
-                            <p className="text-sm text-[#7AA7EC] font-medium">Destino: {targetSemester}</p>
+                        <div className="flex items-start gap-2">
+                            <div>
+                                <h3 className="font-bold text-lg text-[#E2E8F0]">Importar Ramos</h3>
+                                <p className="text-sm text-[#7AA7EC] font-medium">Destino: {targetSemester}</p>
+                            </div>
+                            <div 
+                                className="relative"
+                                onMouseEnter={() => setShowHelpTooltip(true)}
+                                onMouseLeave={() => setShowHelpTooltip(false)}
+                            >
+                                <button className="p-1 hover:bg-[#2E3648] rounded-full transition-colors">
+                                    <HelpCircle className="w-5 h-5 text-[#7AA7EC] hover:text-[#6A96DB] cursor-help transition-colors" />
+                                </button>
+                                
+                                {showHelpTooltip && (
+                                    <div className="absolute left-full ml-2 top-0 z-50 animate-in fade-in slide-in-from-left-2 duration-200">
+                                        <div className="bg-[#1A1F2E] border-2 border-[#7AA7EC] rounded-xl shadow-2xl overflow-hidden">
+                                            <div className="p-3 bg-[#242B3D] border-b border-[#2E3648]">
+                                                <p className="text-sm font-bold text-[#7AA7EC]">📖 Guía Visual de Importación</p>
+                                            </div>
+                                            <img 
+                                                src="/ayuda.gif" 
+                                                alt="Guía de importación desde UTalmatico" 
+                                                className="w-[500px] max-w-none"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <button onClick={() => setIsImporting(false)} className="text-[#94A3B8] hover:text-[#E2E8F0]">
                             <X className="w-5 h-5" />
@@ -401,7 +430,6 @@ export default function Dashboard() {
 
                     <div className="bg-[#1A1F2E] p-4 rounded-lg border border-[#2E3648] mb-4 space-y-3">
                         <div className="flex items-start gap-2">
-                            <span className="text-[#7AA7EC] font-bold text-sm shrink-0">📋</span>
                             <div className="text-xs text-[#E2E8F0] space-y-1">
                                 <p className="font-semibold text-[#E2E8F0]">Instrucciones:</p>
                                 <ol className="list-decimal list-inside space-y-1 text-[#94A3B8]">
@@ -411,11 +439,6 @@ export default function Dashboard() {
                                     <li>Pega el contenido abajo</li>
                                 </ol>
                             </div>
-                        </div>
-                        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded px-2 py-1.5">
-                            <p className="text-xs text-yellow-400">
-                                💡 <strong>Tip:</strong> Selecciona arrastrando desde el título hasta el final de la tabla
-                            </p>
                         </div>
                     </div>
 
