@@ -62,8 +62,8 @@ export default function Register() {
 
         {/* Logo y Título */}
         <div className="text-center mb-8">
-          <div className="bg-[#7AA7EC] w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="text-white w-8 h-8" />
+          <div className="flex items-center justify-center mx-auto mb-4">
+            <img src="/logo.svg" alt="Modo Azúl" className="w-16 h-16" />
           </div>
           <h1 className="text-2xl font-bold text-[#E2E8F0]">Crear Cuenta</h1>
           <p className="text-[#94A3B8] mt-2">Únete a Modo Azúl</p>

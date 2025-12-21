@@ -8,7 +8,7 @@ export default function Landing() {
       {/* Navbar simple */}
       <nav className="container mx-auto px-6 py-6 flex justify-between items-center">
         <div className="flex items-center gap-2 font-bold text-xl text-[#7AA7EC]">
-          <GraduationCap className="w-8 h-8" />
+          <img src="/logo.svg" alt="Modo azul" className="w-8 h-8" />
           <span>Modo azul</span>
         </div>
         <div className="flex items-center gap-4">

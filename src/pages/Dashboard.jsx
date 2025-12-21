@@ -272,9 +272,12 @@ export default function Dashboard() {
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-8 max-w-5xl mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7AA7EC] to-[#9BC7F0]">
+        <div className="flex items-center gap-3">
+          <img src="/logo.svg" alt="Modo Azúl" className="w-10 h-10" />
+          <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7AA7EC] to-[#9BC7F0]">
             Modo Azúl
-        </h1>
+          </h1>
+        </div>
         <button onClick={handleLogout} className="p-2 hover:bg-[#242B3D] rounded-full transition">
             <LogOut className="text-[#94A3B8] hover:text-[#E2E8F0] w-5 h-5 transition-colors" />
         </button>
