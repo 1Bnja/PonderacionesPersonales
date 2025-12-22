@@ -9,6 +9,7 @@ import Toast from '../components/Toast'
 export default function Dashboard() {
   const [ramos, setRamos] = useState([])
   const [loading, setLoading] = useState(true)
+  const [username, setUsername] = useState('')
 
   // MODALES
   const [isImporting, setIsImporting] = useState(false)
@@ -40,6 +41,9 @@ export default function Dashboard() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return navigate('/login')
+
+      // Obtener username del usuario
+      setUsername(user.user_metadata?.username || 'Usuario')
 
       const { data } = await supabase.from('notas').select('ramos').eq('user_id', user.id).single()
 
@@ -275,7 +279,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <img src="/logo.svg" alt="Modo Azúl" className="w-10 h-10" />
           <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7AA7EC] to-[#9BC7F0]">
-            Modo Azúl
+            Bienvenido a Modo Azúl, {username}!
           </h1>
         </div>
         <button onClick={handleLogout} className="p-2 hover:bg-[#242B3D] rounded-full transition">
