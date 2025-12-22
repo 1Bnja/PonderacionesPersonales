@@ -99,25 +99,6 @@ export default function Register() {
 
     setLoading(true)
 
-    // Verificar si el username ya existe
-    const { data: existingUsers, error: checkError } = await supabase
-      .from('auth.users')
-      .select('raw_user_meta_data')
-      .eq('raw_user_meta_data->>username', username.trim())
-      .limit(1)
-
-    if (checkError && checkError.code !== 'PGRST116') {
-      setToast({ message: "Error al verificar el nombre de usuario", type: "error" })
-      setLoading(false)
-      return
-    }
-
-    if (existingUsers && existingUsers.length > 0) {
-      setToast({ message: "Este nombre de usuario ya está en uso. Por favor elige otro.", type: "error" })
-      setLoading(false)
-      return
-    }
-
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
