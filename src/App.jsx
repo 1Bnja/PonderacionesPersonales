@@ -4,6 +4,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import RamoDetail from './pages/RamoDetail'
 import Landing from './pages/Landing'
+import Profile from './pages/Profile'
 import Footer from './components/Footer'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/ramo/:id" element={<RamoDetail />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

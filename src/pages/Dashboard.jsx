@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { magicParser } from '../utils/magicParser'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
-import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle } from 'lucide-react'
+import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle } from 'lucide-react'
 import Toast from '../components/Toast'
 
 export default function Dashboard() {
@@ -42,8 +42,10 @@ export default function Dashboard() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return navigate('/login')
 
-      // Obtener username del usuario
-      setUsername(user.user_metadata?.username || 'Usuario')
+      // Obtener username del usuario (si no existe, extraer del email antes del @)
+      const usernameFromMetadata = user.user_metadata?.username
+      const usernameFromEmail = user.email?.split('@')[0] || 'Usuario'
+      setUsername(usernameFromMetadata || usernameFromEmail)
 
       const { data } = await supabase.from('notas').select('ramos').eq('user_id', user.id).single()
 
@@ -282,9 +284,22 @@ export default function Dashboard() {
             Bienvenido a Modo Azúl, {username}!
           </h1>
         </div>
-        <button onClick={handleLogout} className="p-2 hover:bg-[#242B3D] rounded-full transition">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate('/profile')}
+            className="p-2 hover:bg-[#242B3D] rounded-full transition"
+            title="Editar perfil"
+          >
+            <UserCircle className="text-[#94A3B8] hover:text-[#E2E8F0] w-5 h-5 transition-colors" />
+          </button>
+          <button
+            onClick={handleLogout}
+            className="p-2 hover:bg-[#242B3D] rounded-full transition"
+            title="Cerrar sesión"
+          >
             <LogOut className="text-[#94A3B8] hover:text-[#E2E8F0] w-5 h-5 transition-colors" />
-        </button>
+          </button>
+        </div>
       </div>
 
       <div className="max-w-5xl mx-auto space-y-6">
