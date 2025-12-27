@@ -48,8 +48,14 @@ export default function Dashboard() {
       const usernameFromEmail = user.email?.split('@')[0] || 'Usuario'
       setUsername(usernameFromMetadata || usernameFromEmail)
 
-      // Obtener avatar del usuario
-      setAvatarUrl(user.user_metadata?.avatar_url || '')
+      // Obtener avatar del usuario (con timestamp para evitar caché del navegador)
+      const avatarFromMetadata = user.user_metadata?.avatar_url
+      if (avatarFromMetadata && avatarFromMetadata.includes('supabase')) {
+        // Agregar timestamp para forzar recarga de imagen de Supabase
+        setAvatarUrl(`${avatarFromMetadata}?t=${Date.now()}`)
+      } else {
+        setAvatarUrl(avatarFromMetadata || '')
+      }
 
       const { data } = await supabase.from('notas').select('ramos').eq('user_id', user.id).single()
 

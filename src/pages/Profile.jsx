@@ -207,6 +207,11 @@ export default function Profile() {
     if (error) {
       setToast({ message: error.message, type: "error" })
     } else {
+      // Actualizar el estado local con la nueva URL
+      setAvatarUrl(newAvatarUrl)
+      setAvatarPreview(newAvatarUrl)
+      setAvatarFile(null)
+
       setToast({ message: "Perfil actualizado exitosamente", type: "success" })
       setTimeout(() => {
         navigate('/dashboard')
