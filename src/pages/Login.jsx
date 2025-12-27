@@ -26,10 +26,16 @@ export default function Login() {
   }
 
   const handleGoogleLogin = async () => {
+    // Detectar si estamos en producción o desarrollo
+    const isProduction = window.location.hostname !== 'localhost'
+    const redirectUrl = isProduction
+      ? 'https://ponderaciones-personales.vercel.app/dashboard'
+      : 'http://localhost:5173/dashboard'
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`
+        redirectTo: redirectUrl
       }
     })
 
