@@ -146,10 +146,10 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4 py-8">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#2E3648]">
+      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-3xl border border-[#2E3648]">
 
         {/* Botón Volver */}
         <Link
@@ -160,18 +160,18 @@ export default function Register() {
         </Link>
 
         {/* Logo y Título */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mx-auto mb-4">
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center mx-auto mb-3">
             <img src="/logo.svg" alt="Modo Azúl" className="w-16 h-16" />
           </div>
           <h1 className="text-2xl font-bold text-[#E2E8F0]">Crear Cuenta</h1>
-          <p className="text-[#94A3B8] mt-2">Únete a Modo Azúl</p>
+          <p className="text-[#94A3B8] mt-1">Únete a Modo Azúl</p>
         </div>
 
         {/* Botón de Google */}
         <button
           onClick={handleGoogleSignup}
-          className="w-full bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-3 border border-gray-300 mb-6"
+          className="w-full bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-3 border border-gray-300 mb-5"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -195,7 +195,7 @@ export default function Register() {
         </button>
 
         {/* Separador */}
-        <div className="relative mb-6">
+        <div className="relative my-5">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-[#2E3648]"></div>
           </div>
@@ -206,7 +206,8 @@ export default function Register() {
 
         {/* Formulario */}
         <form onSubmit={handleRegister} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          {/* Nombre, Apellido y Usuario */}
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre</label>
               <div className="relative">
@@ -236,88 +237,94 @@ export default function Register() {
                 />
               </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre de usuario</label>
-            <div className="relative">
-              <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-              <input
-                type="text"
-                placeholder="usuario123"
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                minLength={3}
-              />
+            <div>
+              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Usuario</label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="usuario123"
+                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  minLength={3}
+                />
+              </div>
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
-            <div className="relative">
-              <GraduationCap className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5 pointer-events-none z-10" />
-              <select
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none appearance-none cursor-pointer"
-                value={universidad}
-                onChange={(e) => setUniversidad(e.target.value)}
-                required
-              >
-                <option value="" className="bg-[#1A1F2E]">Selecciona tu institución</option>
-                {universidadesChile.map((uni) => (
-                  <option key={uni} value={uni} className="bg-[#1A1F2E]">
-                    {uni}
-                  </option>
-                ))}
-              </select>
+          {/* Universidad y Correo */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
+              <div className="relative">
+                <GraduationCap className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5 pointer-events-none z-10" />
+                <select
+                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none appearance-none cursor-pointer"
+                  value={universidad}
+                  onChange={(e) => setUniversidad(e.target.value)}
+                  required
+                >
+                  <option value="" className="bg-[#1A1F2E]">Selecciona tu universidad</option>
+                  {universidadesChile.map((uni) => (
+                    <option key={uni} value={uni} className="bg-[#1A1F2E]">
+                      {uni}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo electrónico</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
+                <input
+                  type="email"
+                  placeholder="correo@ejemplo.com"
+                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-              <input
-                type="email"
-                placeholder="correo@ejemplo.com"
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+          {/* Contraseñas */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
+                <input
+                  type="password"
+                  placeholder="Mínimo 6 caracteres"
+                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-              <input
-                type="password"
-                placeholder="Mínimo 6 caracteres"
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Confirmar Contraseña</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-              <input
-                type="password"
-                placeholder="Repite tu contraseña"
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                minLength={6}
-              />
+            <div>
+              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Confirmar contraseña</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
+                <input
+                  type="password"
+                  placeholder="Repite tu contraseña"
+                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
             </div>
           </div>
 
