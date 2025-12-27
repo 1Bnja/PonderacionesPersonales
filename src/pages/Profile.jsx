@@ -205,13 +205,8 @@ export default function Profile() {
     })
 
     if (error) {
-      console.error('Error updating user:', error)
       setToast({ message: error.message, type: "error" })
     } else {
-      console.log('✅ User updated successfully')
-      console.log('📸 New avatar URL saved:', newAvatarUrl)
-      console.log('👤 Updated user data:', data.user?.user_metadata)
-
       // Actualizar el estado local con la nueva URL
       setAvatarUrl(newAvatarUrl)
       setAvatarPreview(newAvatarUrl)

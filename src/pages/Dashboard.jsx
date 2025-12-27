@@ -48,11 +48,6 @@ export default function Dashboard() {
       const usernameFromEmail = user.email?.split('@')[0] || 'Usuario'
       setUsername(usernameFromMetadata || usernameFromEmail)
 
-      // Debug: Verificar qué datos tiene el usuario
-      console.log('🔍 Dashboard - User metadata:', user.user_metadata)
-      console.log('📸 Dashboard - Custom avatar URL:', user.user_metadata?.custom_avatar_url)
-      console.log('📸 Dashboard - Google avatar URL:', user.user_metadata?.avatar_url)
-
       // Obtener avatar del usuario (priorizar avatar personalizado sobre el de Google)
       const customAvatar = user.user_metadata?.custom_avatar_url
       const googleAvatar = user.user_metadata?.avatar_url
@@ -60,11 +55,8 @@ export default function Dashboard() {
 
       if (avatarFromMetadata && avatarFromMetadata.includes('supabase')) {
         // Agregar timestamp para forzar recarga de imagen de Supabase
-        const urlWithTimestamp = `${avatarFromMetadata}?t=${Date.now()}`
-        console.log('🖼️ Dashboard - Setting avatar with timestamp:', urlWithTimestamp)
-        setAvatarUrl(urlWithTimestamp)
+        setAvatarUrl(`${avatarFromMetadata}?t=${Date.now()}`)
       } else {
-        console.log('🖼️ Dashboard - Setting avatar (no timestamp):', avatarFromMetadata || 'No avatar')
         setAvatarUrl(avatarFromMetadata || '')
       }
 
