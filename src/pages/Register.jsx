@@ -163,13 +163,10 @@ export default function Register() {
           <ArrowLeft className="w-4 h-4" /> Volver al inicio
         </Link>
 
-        {/* Logo y Título */}
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center mx-auto mb-3">
-            <img src="/logo.svg" alt="Modo Azúl" className="w-16 h-16" />
-          </div>
+        {/* Título */}
+        <div className="text-center mb-5">
           <h1 className="text-2xl font-bold text-[#E2E8F0]">Crear Cuenta</h1>
-          <p className="text-[#94A3B8] mt-1">Únete a Modo Azúl</p>
+          <p className="text-[#94A3B8] text-sm mt-2">Únete a Modo Azúl</p>
         </div>
 
         {/* Botón de Google */}

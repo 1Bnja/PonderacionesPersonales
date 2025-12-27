@@ -54,13 +54,10 @@ export default function Login() {
 
       <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#2E3648] relative z-10">
 
-        {/* Logo y Título */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mx-auto mb-4">
-            <img src="/logo.svg" alt="Modo Azúl" className="w-16 h-16" />
-          </div>
+        {/* Título */}
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-[#E2E8F0]">Modo Azúl</h1>
-          <p className="text-[#94A3B8] mt-2">Gestiona tus ramos y ponderaciones</p>
+          <p className="text-[#94A3B8] text-sm mt-2">Gestiona tus ramos y ponderaciones</p>
         </div>
 
         {/* Formulario */}
