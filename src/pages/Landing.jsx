@@ -1,43 +1,14 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
+import AnimatedGridPattern from '../components/AnimatedGridPattern'
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-[#1A1F2E] text-[#E2E8F0] flex flex-col relative overflow-hidden">
 
       {/* Animated Grid Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(to right, #2E3648 1px, transparent 1px),
-            linear-gradient(to bottom, #2E3648 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px'
-        }}>
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-20 h-20 border border-[#7AA7EC]/20 rounded-lg"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0.2, 0.5, 0.2],
-                scale: [1, 1.05, 1],
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      <AnimatedGridPattern />
 
       {/* Navbar */}
       <nav className="container mx-auto px-6 py-6 flex justify-between items-center relative z-10">
