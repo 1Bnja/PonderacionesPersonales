@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useNavigate, Link } from 'react-router-dom'
 import { Lock, Mail, User, ArrowLeft, GraduationCap } from 'lucide-react'
 import Toast from '../components/Toast'
+import AnimatedGridPattern from '../components/AnimatedGridPattern'
 
 // Lista de instituciones de educación superior de Chile
 const universidadesChile = [
@@ -146,10 +147,13 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4 py-8 relative overflow-hidden">
+      {/* Animated Grid Background */}
+      <AnimatedGridPattern />
+
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-3xl border border-[#2E3648]">
+      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-3xl border border-[#2E3648] relative z-10">
 
         {/* Botón Volver */}
         <Link

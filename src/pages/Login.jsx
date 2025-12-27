@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useNavigate, Link } from 'react-router-dom'
 import { Lock, Mail } from 'lucide-react'
 import Toast from '../components/Toast'
+import AnimatedGridPattern from '../components/AnimatedGridPattern'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -45,10 +46,13 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4 relative overflow-hidden">
+      {/* Animated Grid Background */}
+      <AnimatedGridPattern />
+
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#2E3648]">
+      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#2E3648] relative z-10">
 
         {/* Logo y Título */}
         <div className="text-center mb-8">
