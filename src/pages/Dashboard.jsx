@@ -3,13 +3,14 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { magicParser } from '../utils/magicParser'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
-import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle } from 'lucide-react'
+import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle, User } from 'lucide-react'
 import Toast from '../components/Toast'
 
 export default function Dashboard() {
   const [ramos, setRamos] = useState([])
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState('')
 
   // MODALES
   const [isImporting, setIsImporting] = useState(false)
@@ -46,6 +47,9 @@ export default function Dashboard() {
       const usernameFromMetadata = user.user_metadata?.username
       const usernameFromEmail = user.email?.split('@')[0] || 'Usuario'
       setUsername(usernameFromMetadata || usernameFromEmail)
+
+      // Obtener avatar del usuario
+      setAvatarUrl(user.user_metadata?.avatar_url || '')
 
       const { data } = await supabase.from('notas').select('ramos').eq('user_id', user.id).single()
 
@@ -284,14 +288,22 @@ export default function Dashboard() {
             Bienvenido a Modo Azúl, {username}!
           </h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {/* Avatar */}
           <button
             onClick={() => navigate('/profile')}
-            className="p-2 hover:bg-[#242B3D] rounded-full transition"
+            className="relative group"
             title="Editar perfil"
           >
-            <UserCircle className="text-[#94A3B8] hover:text-[#E2E8F0] w-5 h-5 transition-colors" />
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#7AA7EC] bg-[#242B3D] flex items-center justify-center hover:border-[#9BC7F0] transition-colors">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-5 h-5 text-[#94A3B8]" />
+              )}
+            </div>
           </button>
+
           <button
             onClick={handleLogout}
             className="p-2 hover:bg-[#242B3D] rounded-full transition"
