@@ -79,8 +79,8 @@ export default function Profile() {
       setUsername(metadata.username || user.email?.split('@')[0] || '')
       setUniversidad(metadata.universidad || '')
 
-      // Cargar avatar (de Google OAuth o personalizado)
-      const customAvatar = metadata.avatar_url
+      // Cargar avatar (priorizar avatar personalizado sobre el de Google)
+      const customAvatar = metadata.custom_avatar_url || metadata.avatar_url
       setAvatarUrl(customAvatar || '')
       setAvatarPreview(customAvatar || '')
     }
@@ -193,20 +193,25 @@ export default function Profile() {
       }
     }
 
-    const { error } = await supabase.auth.updateUser({
+    const { data, error } = await supabase.auth.updateUser({
       data: {
         nombre: nombre.trim(),
         apellido: apellido.trim(),
         username: username.trim(),
         universidad: universidad,
         nombre_completo: `${nombre.trim()} ${apellido.trim()}`,
-        avatar_url: newAvatarUrl
+        custom_avatar_url: newAvatarUrl  // Usar custom_avatar_url en lugar de avatar_url
       }
     })
 
     if (error) {
+      console.error('Error updating user:', error)
       setToast({ message: error.message, type: "error" })
     } else {
+      console.log('✅ User updated successfully')
+      console.log('📸 New avatar URL saved:', newAvatarUrl)
+      console.log('👤 Updated user data:', data.user?.user_metadata)
+
       // Actualizar el estado local con la nueva URL
       setAvatarUrl(newAvatarUrl)
       setAvatarPreview(newAvatarUrl)
