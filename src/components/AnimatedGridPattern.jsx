@@ -10,11 +10,15 @@ export default function AnimatedGridPattern() {
       const newSquares = []
       const numSquares = 50 // Número de cuadros que se animarán
 
+      // Calcular cuántos cuadros caben en el viewport
+      const cols = Math.ceil(window.innerWidth / 40) + 5 // +5 para cubrir área extra con el skew
+      const rows = Math.ceil(window.innerHeight / 40) + 5
+
       for (let i = 0; i < numSquares; i++) {
         newSquares.push({
           id: i,
-          x: Math.floor(Math.random() * 30), // Columna aleatoria (0-29)
-          y: Math.floor(Math.random() * 30), // Fila aleatoria (0-29)
+          x: Math.floor(Math.random() * cols), // Columna aleatoria basada en el viewport
+          y: Math.floor(Math.random() * rows), // Fila aleatoria basada en el viewport
           delay: Math.random() * 3, // Delay aleatorio entre 0-3s
           duration: 2 + Math.random() * 2, // Duración entre 2-4s
         })
@@ -24,6 +28,10 @@ export default function AnimatedGridPattern() {
     }
 
     generateSquares()
+
+    // Regenerar cuadros si cambia el tamaño de la ventana
+    window.addEventListener('resize', generateSquares)
+    return () => window.removeEventListener('resize', generateSquares)
   }, [])
 
   return (
