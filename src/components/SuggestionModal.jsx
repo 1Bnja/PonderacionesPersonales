@@ -21,10 +21,10 @@ export default function SuggestionModal({ isOpen, onClose }) {
     setLoading(true)
 
     try {
-      // Configuración de EmailJS
-      const serviceId = 'service_sz6nr06'
-      const templateId = 'template_wx076dw'
-      const publicKey = 'tUijGuPtwWcFWEWEN'
+      // Configuración de EmailJS desde variables de entorno
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
       const templateParams = {
         from_name: name || 'Anónimo',
