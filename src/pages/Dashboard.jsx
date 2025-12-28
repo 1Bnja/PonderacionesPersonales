@@ -72,7 +72,7 @@ export default function Dashboard() {
         setAvatarUrl(avatarFromMetadata || '')
       }
 
-      const { data } = await supabase.from('notas').select('ramos, semester_colors, ramo_colors').eq('user_id', user.id).single()
+      const { data } = await supabase.from('notas').select('ramos, semester_colors, ramo_colors, local_semesters').eq('user_id', user.id).single()
 
       if (data && data.ramos) {
           setRamos(data.ramos)
@@ -82,17 +82,23 @@ export default function Dashboard() {
           // Cargar colores si existen
           if (data.semester_colors) setSemesterColors(data.semester_colors)
           if (data.ramo_colors) setRamoColors(data.ramo_colors)
+
+          // Cargar semestres locales (vacíos)
+          if (data.local_semesters && Array.isArray(data.local_semesters)) {
+            setLocalSemesters(data.local_semesters)
+          }
       }
     } catch (error) { console.error(error) } finally { setLoading(false) }
   }
 
-  const saveNotasToCloud = async (nuevosRamos, newSemesterColors = null, newRamoColors = null) => {
+  const saveNotasToCloud = async (nuevosRamos, newSemesterColors = null, newRamoColors = null, newLocalSemesters = null) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const updateData = { ramos: nuevosRamos }
     if (newSemesterColors !== null) updateData.semester_colors = newSemesterColors
     if (newRamoColors !== null) updateData.ramo_colors = newRamoColors
+    if (newLocalSemesters !== null) updateData.local_semesters = newLocalSemesters
 
     const { data: existing } = await supabase.from('notas').select('id').eq('user_id', user.id).single()
     if (!existing) {
@@ -100,7 +106,8 @@ export default function Dashboard() {
         user_id: user.id,
         ramos: nuevosRamos,
         semester_colors: newSemesterColors || {},
-        ramo_colors: newRamoColors || {}
+        ramo_colors: newRamoColors || {},
+        local_semesters: newLocalSemesters || []
       }])
     } else {
       await supabase.from('notas').update(updateData).eq('user_id', user.id)
@@ -119,13 +126,14 @@ export default function Dashboard() {
       if (!newSemesterName.trim()) return
 
       const limpio = newSemesterName.trim()
-      setLocalSemesters(prev => [...prev, limpio])
+      const newLocalSemesters = [...localSemesters, limpio]
+      setLocalSemesters(newLocalSemesters)
       setExpandedSemesters(prev => ({ ...prev, [limpio]: true }))
 
       // Guardar color del semestre
       const newColors = { ...semesterColors, [limpio]: newSemesterColor }
       setSemesterColors(newColors)
-      await saveNotasToCloud(ramos, newColors, null)
+      await saveNotasToCloud(ramos, newColors, null, newLocalSemesters)
 
       setIsCreating(false) // Cierra el modal
       setNewSemesterColor('Azul')
@@ -158,14 +166,13 @@ export default function Dashboard() {
     setIsImporting(false)
 
     // Asegurar que el semestre esté en localSemesters para que persista aunque se borren los ramos
-    setLocalSemesters(prev => {
-      if (!prev.includes(targetSemester)) {
-        return [...prev, targetSemester]
-      }
-      return prev
-    })
+    let updatedLocalSemesters = localSemesters
+    if (!localSemesters.includes(targetSemester)) {
+      updatedLocalSemesters = [...localSemesters, targetSemester]
+      setLocalSemesters(updatedLocalSemesters)
+    }
 
-    await saveNotasToCloud(nuevaLista)
+    await saveNotasToCloud(nuevaLista, null, null, updatedLocalSemesters)
     setToast({ message: `${ramosProcesados.length} ramo(s) importado(s) exitosamente`, type: "success" })
   }
 
@@ -216,8 +223,10 @@ export default function Dashboard() {
       : ramos
 
     // Actualizar localSemesters
+    let updatedLocalSemesters = localSemesters
     if (nameChanged && localSemesters.includes(oldName)) {
-      setLocalSemesters(prev => prev.map(s => s === oldName ? editedSemesterName : s))
+      updatedLocalSemesters = localSemesters.map(s => s === oldName ? editedSemesterName : s)
+      setLocalSemesters(updatedLocalSemesters)
     }
 
     // Actualizar expandedSemesters
@@ -240,7 +249,7 @@ export default function Dashboard() {
     setSemesterColors(newColors)
 
     setRamos(nuevaLista)
-    await saveNotasToCloud(nuevaLista, newColors, null)
+    await saveNotasToCloud(nuevaLista, newColors, null, updatedLocalSemesters)
     setIsEditingModal(false)
     setEditingSemester(null)
     setToast({ message: nameChanged ? "Semestre renombrado" : "Color actualizado", type: "success" })
@@ -257,10 +266,11 @@ export default function Dashboard() {
 
     // Eliminar todos los ramos de este semestre
     const nuevaLista = ramos.filter(r => r.semestre !== semestre)
-    
+
     // Eliminar de localSemesters
-    setLocalSemesters(prev => prev.filter(s => s !== semestre))
-    
+    const updatedLocalSemesters = localSemesters.filter(s => s !== semestre)
+    setLocalSemesters(updatedLocalSemesters)
+
     // Eliminar de expandedSemesters
     setExpandedSemesters(prev => {
       const newState = { ...prev }
@@ -269,7 +279,7 @@ export default function Dashboard() {
     })
 
     setRamos(nuevaLista)
-    await saveNotasToCloud(nuevaLista)
+    await saveNotasToCloud(nuevaLista, null, null, updatedLocalSemesters)
     setDeletingConfirmation(null)
     setToast({ message: "Semestre eliminado", type: "info" })
   }
@@ -293,14 +303,13 @@ export default function Dashboard() {
     setRamos(nuevaLista)
 
     // Asegurar que el semestre esté en localSemesters para que persista aunque se borren los ramos
-    setLocalSemesters(prev => {
-      if (!prev.includes(semestre)) {
-        return [...prev, semestre]
-      }
-      return prev
-    })
+    let updatedLocalSemesters = localSemesters
+    if (!localSemesters.includes(semestre)) {
+      updatedLocalSemesters = [...localSemesters, semestre]
+      setLocalSemesters(updatedLocalSemesters)
+    }
 
-    await saveNotasToCloud(nuevaLista)
+    await saveNotasToCloud(nuevaLista, null, null, updatedLocalSemesters)
     setToast({ message: "Ramo creado. Haz clic para editarlo.", type: "success" })
   }
 
