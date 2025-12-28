@@ -6,6 +6,7 @@ import { calcularEstadisticasRamo } from '../utils/gradeMath'
 import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle, User, Lightbulb } from 'lucide-react'
 import Toast from '../components/Toast'
 import SuggestionModal from '../components/SuggestionModal'
+import ColorPicker, { getColorStyles } from '../components/ColorPicker'
 
 export default function Dashboard() {
   const [ramos, setRamos] = useState([])
@@ -28,6 +29,13 @@ export default function Dashboard() {
   const [editingSemester, setEditingSemester] = useState(null)
   const [editedSemesterName, setEditedSemesterName] = useState('')
   const [deletingConfirmation, setDeletingConfirmation] = useState(null)
+  const [isEditingModal, setIsEditingModal] = useState(false)
+
+  // COLORES DE SEMESTRES Y RAMOS
+  const [semesterColors, setSemesterColors] = useState({}) // { "1/2024": "Azul", ... }
+  const [ramoColors, setRamoColors] = useState({}) // { "ramoId": "Rosa", ... }
+  const [newSemesterColor, setNewSemesterColor] = useState('Azul')
+  const [editedSemesterColor, setEditedSemesterColor] = useState('Azul')
 
   // TOAST
   const [toast, setToast] = useState(null)
@@ -64,39 +72,63 @@ export default function Dashboard() {
         setAvatarUrl(avatarFromMetadata || '')
       }
 
-      const { data } = await supabase.from('notas').select('ramos').eq('user_id', user.id).single()
+      const { data } = await supabase.from('notas').select('ramos, semester_colors, ramo_colors').eq('user_id', user.id).single()
 
       if (data && data.ramos) {
           setRamos(data.ramos)
           const sems = [...new Set(data.ramos.map(r => r.semestre || "Otros"))].sort().reverse()
           if(sems.length > 0) setExpandedSemesters({ [sems[0]]: true })
+
+          // Cargar colores si existen
+          if (data.semester_colors) setSemesterColors(data.semester_colors)
+          if (data.ramo_colors) setRamoColors(data.ramo_colors)
       }
     } catch (error) { console.error(error) } finally { setLoading(false) }
   }
 
-  const saveNotasToCloud = async (nuevosRamos) => {
+  const saveNotasToCloud = async (nuevosRamos, newSemesterColors = null, newRamoColors = null) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
+
+    const updateData = { ramos: nuevosRamos }
+    if (newSemesterColors !== null) updateData.semester_colors = newSemesterColors
+    if (newRamoColors !== null) updateData.ramo_colors = newRamoColors
+
     const { data: existing } = await supabase.from('notas').select('id').eq('user_id', user.id).single()
-    if (!existing) await supabase.from('notas').insert([{ user_id: user.id, ramos: nuevosRamos }])
-    else await supabase.from('notas').update({ ramos: nuevosRamos }).eq('user_id', user.id)
+    if (!existing) {
+      await supabase.from('notas').insert([{
+        user_id: user.id,
+        ramos: nuevosRamos,
+        semester_colors: newSemesterColors || {},
+        ramo_colors: newRamoColors || {}
+      }])
+    } else {
+      await supabase.from('notas').update(updateData).eq('user_id', user.id)
+    }
   }
 
   // 1. ABRIR MODAL CREAR
   const openCreateModal = () => {
       setNewSemesterName('')
+      setNewSemesterColor('Azul')
       setIsCreating(true)
   }
 
   // 2. GUARDAR NUEVO SEMESTRE (Crear caja vacía)
-  const handleSaveNewSemester = () => {
+  const handleSaveNewSemester = async () => {
       if (!newSemesterName.trim()) return
 
       const limpio = newSemesterName.trim()
       setLocalSemesters(prev => [...prev, limpio])
       setExpandedSemesters(prev => ({ ...prev, [limpio]: true }))
-      
+
+      // Guardar color del semestre
+      const newColors = { ...semesterColors, [limpio]: newSemesterColor }
+      setSemesterColors(newColors)
+      await saveNotasToCloud(ramos, newColors, null)
+
       setIsCreating(false) // Cierra el modal
+      setNewSemesterColor('Azul')
   }
 
   // 3. ABRIR EL IMPORTADOR PARA UN SEMESTRE ESPECÍFICO
@@ -157,38 +189,61 @@ export default function Dashboard() {
     e.stopPropagation()
     setEditingSemester(semestre)
     setEditedSemesterName(semestre)
+    setEditedSemesterColor(semesterColors[semestre] || 'Azul')
+    setIsEditingModal(true)
   }
 
-  const saveEditedSemester = async (oldName, e) => {
-    e.stopPropagation()
-    if (!editedSemesterName.trim() || editedSemesterName === oldName) {
+  const saveEditedSemester = async () => {
+    if (!editedSemesterName.trim()) {
+      setIsEditingModal(false)
+      setEditingSemester(null)
+      return
+    }
+
+    const oldName = editingSemester
+    const nameChanged = editedSemesterName !== oldName
+    const colorChanged = editedSemesterColor !== (semesterColors[oldName] || 'Azul')
+
+    if (!nameChanged && !colorChanged) {
+      setIsEditingModal(false)
       setEditingSemester(null)
       return
     }
 
     // Actualizar ramos con el nuevo nombre de semestre
-    const nuevaLista = ramos.map(r => 
-      r.semestre === oldName ? { ...r, semestre: editedSemesterName } : r
-    )
-    
+    const nuevaLista = nameChanged
+      ? ramos.map(r => r.semestre === oldName ? { ...r, semestre: editedSemesterName } : r)
+      : ramos
+
     // Actualizar localSemesters
-    if (localSemesters.includes(oldName)) {
+    if (nameChanged && localSemesters.includes(oldName)) {
       setLocalSemesters(prev => prev.map(s => s === oldName ? editedSemesterName : s))
     }
-    
+
     // Actualizar expandedSemesters
-    const wasExpanded = expandedSemesters[oldName]
-    setExpandedSemesters(prev => {
-      const newState = { ...prev }
-      delete newState[oldName]
-      if (wasExpanded) newState[editedSemesterName] = true
-      return newState
-    })
+    if (nameChanged) {
+      const wasExpanded = expandedSemesters[oldName]
+      setExpandedSemesters(prev => {
+        const newState = { ...prev }
+        delete newState[oldName]
+        if (wasExpanded) newState[editedSemesterName] = true
+        return newState
+      })
+    }
+
+    // Actualizar colores
+    const newColors = { ...semesterColors }
+    if (nameChanged) {
+      delete newColors[oldName]
+    }
+    newColors[editedSemesterName] = editedSemesterColor
+    setSemesterColors(newColors)
 
     setRamos(nuevaLista)
-    await saveNotasToCloud(nuevaLista)
+    await saveNotasToCloud(nuevaLista, newColors, null)
+    setIsEditingModal(false)
     setEditingSemester(null)
-    setToast({ message: "Semestre renombrado", type: "success" })
+    setToast({ message: nameChanged ? "Semestre renombrado" : "Color actualizado", type: "success" })
   }
 
   const deleteSemester = async (semestre, e) => {
@@ -421,7 +476,7 @@ export default function Dashboard() {
         {/* ------------------------------------------- */}
         {isCreating && (
              <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-                <div className="bg-[#242B3D] p-6 rounded-2xl border border-[#2E3648] w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="bg-[#242B3D] p-6 rounded-2xl border border-[#2E3648] w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="font-bold text-lg text-[#E2E8F0]">Nueva Carpeta</h3>
                         <button onClick={() => setIsCreating(false)} className="text-[#94A3B8] hover:text-[#E2E8F0]">
@@ -429,18 +484,28 @@ export default function Dashboard() {
                         </button>
                     </div>
 
-                    <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
-                    <input
-                        autoFocus
-                        type="text"
-                        value={newSemesterName}
-                        onChange={(e) => setNewSemesterName(e.target.value)}
-                        placeholder="Ej: 2/2026"
-                        className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-3 px-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] outline-none mb-6"
-                        onKeyDown={(e) => e.key === 'Enter' && handleSaveNewSemester()}
-                    />
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
+                            <input
+                                autoFocus
+                                type="text"
+                                value={newSemesterName}
+                                onChange={(e) => setNewSemesterName(e.target.value)}
+                                placeholder="Ej: 2/2026"
+                                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-3 px-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] outline-none"
+                                onKeyDown={(e) => e.key === 'Enter' && handleSaveNewSemester()}
+                            />
+                        </div>
 
-                    <div className="flex gap-3">
+                        <ColorPicker
+                            selectedColor={newSemesterColor}
+                            onSelectColor={setNewSemesterColor}
+                            label="Color del Semestre"
+                        />
+                    </div>
+
+                    <div className="flex gap-3 mt-6">
                         <button
                             onClick={handleSaveNewSemester}
                             className="flex-1 bg-[#7AA7EC] hover:bg-[#6A96DB] text-white py-2.5 rounded-lg font-bold transition-colors"
@@ -449,6 +514,58 @@ export default function Dashboard() {
                         </button>
                         <button
                             onClick={() => setIsCreating(false)}
+                            className="flex-1 bg-[#2E3648] hover:bg-[#3A4357] text-[#E2E8F0] py-2.5 rounded-lg font-bold transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+             </div>
+        )}
+
+        {/* ------------------------------------------- */}
+        {/* MODAL 1.5: EDITAR SEMESTRE                 */}
+        {/* ------------------------------------------- */}
+        {isEditingModal && (
+             <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+                <div className="bg-[#242B3D] p-6 rounded-2xl border border-[#2E3648] w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="font-bold text-lg text-[#E2E8F0]">Editar Semestre</h3>
+                        <button onClick={() => { setIsEditingModal(false); setEditingSemester(null); }} className="text-[#94A3B8] hover:text-[#E2E8F0]">
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
+                            <input
+                                autoFocus
+                                type="text"
+                                value={editedSemesterName}
+                                onChange={(e) => setEditedSemesterName(e.target.value)}
+                                placeholder="Ej: 2/2026"
+                                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-3 px-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] outline-none"
+                                onKeyDown={(e) => e.key === 'Enter' && saveEditedSemester()}
+                            />
+                        </div>
+
+                        <ColorPicker
+                            selectedColor={editedSemesterColor}
+                            onSelectColor={setEditedSemesterColor}
+                            label="Color del Semestre"
+                        />
+                    </div>
+
+                    <div className="flex gap-3 mt-6">
+                        <button
+                            onClick={saveEditedSemester}
+                            className="flex-1 bg-[#7AA7EC] hover:bg-[#6A96DB] text-white py-2.5 rounded-lg font-bold transition-colors"
+                        >
+                            Guardar
+                        </button>
+                        <button
+                            onClick={() => { setIsEditingModal(false); setEditingSemester(null); }}
                             className="flex-1 bg-[#2E3648] hover:bg-[#3A4357] text-[#E2E8F0] py-2.5 rounded-lg font-bold transition-colors"
                         >
                             Cancelar
@@ -548,72 +665,50 @@ export default function Dashboard() {
                     const ramosDeEsteSemestre = ramosPorSemestre[semestre] || [];
                     const count = ramosDeEsteSemestre.length;
                     
-                    const promedioSemestre = count > 0 
+                    const promedioSemestre = count > 0
                         ? ramosDeEsteSemestre.reduce((acc, r) => acc + r.estadisticas.promedioActual, 0) / count
                         : 0;
 
+                    const semesterColor = getColorStyles(semesterColors[semestre] || 'Azul');
+
                     return (
-                        <div key={semestre} className="bg-[#242B3D] rounded-2xl border border-[#2E3648] overflow-hidden transition-all shadow-lg">
+                        <div key={semestre} className="bg-[#242B3D] rounded-2xl border overflow-hidden transition-all shadow-lg" style={{ borderColor: semesterColor.border }}>
 
                             {/* CABECERA DEL SEMESTRE */}
                             <div
                                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#2A3142] transition-colors select-none group"
                                 onClick={() => toggleSemestre(semestre)}
+                                style={{ backgroundColor: isOpen ? semesterColor.light : 'transparent' }}
                             >
                                 <div className="flex items-center gap-3 flex-1">
-                                    <div className={`p-2 rounded-lg transition-colors ${isOpen ? 'bg-[#7AA7EC] text-white' : 'bg-[#2E3648] text-[#94A3B8] group-hover:text-[#E2E8F0]'}`}>
+                                    <div className={`p-2 rounded-lg transition-colors`} style={{ backgroundColor: isOpen ? semesterColor.bg : '#2E3648', color: isOpen ? 'white' : '#94A3B8' }}>
                                         {isOpen ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                                     </div>
                                     <div className="flex-1">
-                                        {editingSemester === semestre ? (
-                                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                                                <input
-                                                    type="text"
-                                                    value={editedSemesterName}
-                                                    onChange={(e) => setEditedSemesterName(e.target.value)}
-                                                    onKeyDown={(e) => e.key === 'Enter' && saveEditedSemester(semestre, e)}
-                                                    className="bg-[#1A1F2E] border border-[#7AA7EC] rounded-lg px-3 py-1 text-[#E2E8F0] text-lg font-bold focus:outline-none focus:ring-2 focus:ring-[#7AA7EC]"
-                                                    autoFocus
-                                                />
+                                        <div className="flex items-center gap-2">
+                                            <div>
+                                                <h2 className="text-lg md:text-xl font-bold text-[#E2E8F0]">{semestre}</h2>
+                                                <p className="text-xs text-[#94A3B8]">
+                                                    {count === 0 ? "Carpeta vacía" : `${count} ramos`}
+                                                </p>
+                                            </div>
+                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
                                                 <button
-                                                    onClick={(e) => saveEditedSemester(semestre, e)}
-                                                    className="p-2 bg-green-500/90 hover:bg-green-500 text-white rounded-lg transition-colors"
+                                                    onClick={(e) => startEditingSemester(semestre, e)}
+                                                    className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-[#7AA7EC]"
+                                                    title="Editar semestre"
                                                 >
-                                                    <Check className="w-4 h-4" />
+                                                    <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); setEditingSemester(null); }}
-                                                    className="p-2 bg-[#2E3648] hover:bg-[#3A4357] text-[#E2E8F0] rounded-lg transition-colors"
+                                                    onClick={(e) => deleteSemester(semestre, e)}
+                                                    className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-red-400"
+                                                    title="Eliminar semestre"
                                                 >
-                                                    <X className="w-4 h-4" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <div>
-                                                    <h2 className="text-lg md:text-xl font-bold text-[#E2E8F0]">{semestre}</h2>
-                                                    <p className="text-xs text-[#94A3B8]">
-                                                        {count === 0 ? "Carpeta vacía" : `${count} ramos`}
-                                                    </p>
-                                                </div>
-                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                                                    <button
-                                                        onClick={(e) => startEditingSemester(semestre, e)}
-                                                        className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-[#7AA7EC]"
-                                                        title="Editar nombre"
-                                                    >
-                                                        <Edit2 className="w-4 h-4" />
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => deleteSemester(semestre, e)}
-                                                        className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-red-400"
-                                                        title="Eliminar semestre"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -637,7 +732,17 @@ export default function Dashboard() {
                                     {count > 0 ? (
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                                             {ramosDeEsteSemestre.map((ramo) => (
-                                                <RamoCard key={ramo.id} ramo={ramo} onDelete={() => deleteRamo(ramo.id)} />
+                                                <RamoCard
+                                                    key={ramo.id}
+                                                    ramo={ramo}
+                                                    onDelete={() => deleteRamo(ramo.id)}
+                                                    ramoColor={ramoColors[ramo.id] || semesterColors[semestre] || 'Azul'}
+                                                    onColorChange={(newColor) => {
+                                                        const newColors = { ...ramoColors, [ramo.id]: newColor };
+                                                        setRamoColors(newColors);
+                                                        saveNotasToCloud(ramos, null, newColors);
+                                                    }}
+                                                />
                                             ))}
                                         </div>
                                     ) : (
@@ -687,11 +792,12 @@ export default function Dashboard() {
   )
 }
 
-function RamoCard({ ramo, onDelete }) {
+function RamoCard({ ramo, onDelete, ramoColor, onColorChange }) {
     const navigate = useNavigate()
     const { estadisticas } = ramo
     const nota = estadisticas.promedioActual
     const aprobado = nota >= 4.0
+    const [showColorPicker, setShowColorPicker] = useState(false)
 
     let badgeColor = "bg-[#94A3B8]/50"
     if (estadisticas.estado === "APROBADO") badgeColor = "bg-green-500/90"
@@ -699,20 +805,51 @@ function RamoCard({ ramo, onDelete }) {
     if (estadisticas.estado === "CRÍTICO") badgeColor = "bg-orange-500/90"
     if (estadisticas.estado === "EN CURSO") badgeColor = "bg-[#7AA7EC]/90"
 
+    const colorStyles = getColorStyles(ramoColor)
+
     return (
         <div
             onClick={() => navigate(`/ramo/${ramo.id}`)}
-            className="bg-[#242B3D] rounded-2xl p-5 border border-[#2E3648] shadow-lg hover:shadow-xl hover:border-[#7AA7EC]/50 transition-all hover:-translate-y-1 relative group cursor-pointer"
+            className="bg-[#242B3D] rounded-2xl p-5 border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 relative group cursor-pointer"
+            style={{ borderColor: colorStyles.border }}
         >
-            <button
-                onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                className="absolute top-4 right-4 text-[#94A3B8] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity z-10 p-1 hover:bg-[#2E3648] rounded"
-                title="Eliminar ramo"
-            >
-                <Trash2 className="w-4 h-4" />
-            </button>
+            <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <button
+                    onClick={(e) => { e.stopPropagation(); setShowColorPicker(!showColorPicker); }}
+                    className="w-7 h-7 rounded-full border-2 hover:scale-110 transition-transform"
+                    style={{ backgroundColor: colorStyles.bg, borderColor: colorStyles.border }}
+                    title="Cambiar color"
+                />
+                <button
+                    onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                    className="p-1 text-[#94A3B8] hover:text-red-400 hover:bg-[#2E3648] rounded transition-colors"
+                    title="Eliminar ramo"
+                >
+                    <Trash2 className="w-4 h-4" />
+                </button>
+            </div>
 
-            <div className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold text-white mb-3 tracking-wide ${badgeColor}`}>
+            {/* Mini selector de colores */}
+            {showColorPicker && (
+                <div
+                    className="absolute top-14 right-4 bg-[#242B3D] border border-[#2E3648] rounded-xl p-3 shadow-2xl z-20 animate-in fade-in zoom-in-95 duration-200"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <ColorPicker
+                        selectedColor={ramoColor}
+                        onSelectColor={(color) => {
+                            onColorChange(color);
+                            setShowColorPicker(false);
+                        }}
+                        label=""
+                    />
+                </div>
+            )}
+
+            <div
+                className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold text-white mb-3 tracking-wide ${badgeColor}`}
+                style={{ backgroundColor: estadisticas.estado === "EN CURSO" ? colorStyles.bg : undefined }}
+            >
                 {estadisticas.estado}
             </div>
 
