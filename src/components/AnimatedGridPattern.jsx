@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 export default function AnimatedGridPattern() {
   const [squares, setSquares] = useState([])
@@ -13,8 +13,8 @@ export default function AnimatedGridPattern() {
       const cols = Math.ceil(window.innerWidth / 40) + 15 // +15 para cubrir área extra con el skew
       const rows = Math.ceil(window.innerHeight / 40) + 15
 
-      // Reducir número de cuadros para mejor rendimiento
-      const numSquares = Math.min(60, Math.floor((cols * rows) / 15))
+      // Reducir número de cuadros para mejor rendimiento (máximo 40)
+      const numSquares = Math.min(40, Math.floor((cols * rows) / 20))
 
       for (let i = 0; i < numSquares; i++) {
         newSquares.push({
@@ -45,6 +45,18 @@ export default function AnimatedGridPattern() {
     }
   }, [])
 
+  // Configuración de animación compartida para evitar recrear objetos
+  const animationConfig = useMemo(() => ({
+    opacity: [0, 0.6, 0],
+    scale: [0.8, 1, 0.8],
+    backgroundColor: ['rgba(122, 167, 236, 0)', 'rgba(122, 167, 236, 0.2)', 'rgba(122, 167, 236, 0)'],
+  }), [])
+
+  const initialConfig = useMemo(() => ({
+    opacity: 0,
+    scale: 0.8
+  }), [])
+
   return (
     <div className="absolute inset-0 -top-[20%] -bottom-[20%] overflow-hidden pointer-events-none skew-y-12 opacity-70">
       {/* Grid SVG de fondo */}
@@ -71,7 +83,7 @@ export default function AnimatedGridPattern() {
       </svg>
 
       {/* Cuadros animados que se iluminan */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0" style={{ transform: 'translateZ(0)' }}>
         {squares.map((square) => (
           <motion.div
             key={square.id}
@@ -80,13 +92,10 @@ export default function AnimatedGridPattern() {
               left: `${square.x * 40}px`,
               top: `${square.y * 40}px`,
               willChange: 'opacity, transform',
+              transform: 'translateZ(0)',
             }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{
-              opacity: [0, 0.6, 0],
-              scale: [0.8, 1, 0.8],
-              backgroundColor: ['rgba(122, 167, 236, 0)', 'rgba(122, 167, 236, 0.2)', 'rgba(122, 167, 236, 0)'],
-            }}
+            initial={initialConfig}
+            animate={animationConfig}
             transition={{
               duration: square.duration,
               delay: square.delay,
