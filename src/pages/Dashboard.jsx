@@ -3,8 +3,9 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { magicParser } from '../utils/magicParser'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
-import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle, User } from 'lucide-react'
+import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle, User, Lightbulb } from 'lucide-react'
 import Toast from '../components/Toast'
+import SuggestionModal from '../components/SuggestionModal'
 
 export default function Dashboard() {
   const [ramos, setRamos] = useState([])
@@ -30,9 +31,12 @@ export default function Dashboard() {
 
   // TOAST
   const [toast, setToast] = useState(null)
-  
+
   // TOOLTIP AYUDA
   const [showHelpTooltip, setShowHelpTooltip] = useState(false)
+
+  // MODAL SUGERENCIAS
+  const [showSuggestionModal, setShowSuggestionModal] = useState(false)
 
   const navigate = useNavigate()
 
@@ -298,6 +302,15 @@ export default function Dashboard() {
           </h1>
         </div>
         <div className="flex items-center gap-3">
+          {/* Botón de Sugerencias */}
+          <button
+            onClick={() => setShowSuggestionModal(true)}
+            className="p-2 hover:bg-[#242B3D] rounded-full transition group"
+            title="Enviar sugerencia"
+          >
+            <Lightbulb className="text-[#94A3B8] group-hover:text-[#7AA7EC] w-5 h-5 transition-colors" />
+          </button>
+
           {/* Avatar */}
           <button
             onClick={() => navigate('/profile')}
@@ -648,6 +661,12 @@ export default function Dashboard() {
             </div>
         )}
       </div>
+
+      {/* MODAL DE SUGERENCIAS */}
+      <SuggestionModal
+        isOpen={showSuggestionModal}
+        onClose={() => setShowSuggestionModal(false)}
+      />
     </div>
   )
 }
