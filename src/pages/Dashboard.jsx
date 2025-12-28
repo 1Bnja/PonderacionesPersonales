@@ -117,13 +117,21 @@ export default function Dashboard() {
 
     const ramosProcesados = ramosDetectados.map(r => ({
         ...calcularEstadisticasRamo(r),
-        semestre: targetSemester 
+        semestre: targetSemester
     }))
 
     const nuevaLista = [...ramos, ...ramosProcesados]
     setRamos(nuevaLista)
     setInputText('')
     setIsImporting(false)
+
+    // Asegurar que el semestre esté en localSemesters para que persista aunque se borren los ramos
+    setLocalSemesters(prev => {
+      if (!prev.includes(targetSemester)) {
+        return [...prev, targetSemester]
+      }
+      return prev
+    })
 
     await saveNotasToCloud(nuevaLista)
     setToast({ message: `${ramosProcesados.length} ramo(s) importado(s) exitosamente`, type: "success" })
@@ -228,6 +236,14 @@ export default function Dashboard() {
     const ramoConEstadisticas = calcularEstadisticasRamo(nuevoRamo)
     const nuevaLista = [...ramos, ramoConEstadisticas]
     setRamos(nuevaLista)
+
+    // Asegurar que el semestre esté en localSemesters para que persista aunque se borren los ramos
+    setLocalSemesters(prev => {
+      if (!prev.includes(semestre)) {
+        return [...prev, semestre]
+      }
+      return prev
+    })
 
     await saveNotasToCloud(nuevaLista)
     setToast({ message: "Ramo creado. Haz clic para editarlo.", type: "success" })
