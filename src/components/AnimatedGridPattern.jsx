@@ -8,11 +8,13 @@ export default function AnimatedGridPattern() {
   useEffect(() => {
     const generateSquares = () => {
       const newSquares = []
-      const numSquares = 50 // Número de cuadros que se animarán
 
-      // Calcular cuántos cuadros caben en el viewport
-      const cols = Math.ceil(window.innerWidth / 40) + 5 // +5 para cubrir área extra con el skew
-      const rows = Math.ceil(window.innerHeight / 40) + 5
+      // Calcular cuántos cuadros caben en el viewport con margen extra por el skew
+      const cols = Math.ceil(window.innerWidth / 40) + 15 // +15 para cubrir área extra con el skew
+      const rows = Math.ceil(window.innerHeight / 40) + 15
+
+      // Reducir número de cuadros para mejor rendimiento
+      const numSquares = Math.min(60, Math.floor((cols * rows) / 15))
 
       for (let i = 0; i < numSquares; i++) {
         newSquares.push({
@@ -29,13 +31,22 @@ export default function AnimatedGridPattern() {
 
     generateSquares()
 
-    // Regenerar cuadros si cambia el tamaño de la ventana
-    window.addEventListener('resize', generateSquares)
-    return () => window.removeEventListener('resize', generateSquares)
+    // Regenerar cuadros si cambia el tamaño de la ventana (con debounce)
+    let resizeTimeout
+    const handleResize = () => {
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(generateSquares, 250)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      clearTimeout(resizeTimeout)
+    }
   }, [])
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none skew-y-12 opacity-70">
+    <div className="absolute inset-0 -top-[20%] -bottom-[20%] overflow-hidden pointer-events-none skew-y-12 opacity-70">
       {/* Grid SVG de fondo */}
       <svg
         className="absolute inset-0 w-full h-full"
@@ -68,6 +79,7 @@ export default function AnimatedGridPattern() {
             style={{
               left: `${square.x * 40}px`,
               top: `${square.y * 40}px`,
+              willChange: 'opacity, transform',
             }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{
