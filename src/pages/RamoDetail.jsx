@@ -4,6 +4,8 @@ import { supabase } from '../supabaseClient'
 import { ArrowLeft, GraduationCap, Edit2, Save, X, Trash2, Plus, Check } from 'lucide-react'
 import Toast from '../components/Toast'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
+import { format, parseISO, isValid } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 export default function RamoDetail() {
   const { id } = useParams()
@@ -73,7 +75,48 @@ export default function RamoDetail() {
   // ============================================
   const startEditingEval = (unidadIdx, evalIdx, field, currentValue) => {
     setEditingEval({ unidadIdx, evalIdx, field })
-    setEditValue(currentValue !== null && currentValue !== undefined ? String(currentValue) : '')
+    // Si es fecha, convertir a formato ISO para el input date
+    if (field === 'fecha' && currentValue) {
+      const fecha = parseFechaToISO(currentValue)
+      setEditValue(fecha)
+    } else {
+      setEditValue(currentValue !== null && currentValue !== undefined ? String(currentValue) : '')
+    }
+  }
+
+  // Función para convertir fecha a formato ISO (YYYY-MM-DD)
+  const parseFechaToISO = (fechaStr) => {
+    if (!fechaStr) return ''
+    
+    // Si ya está en formato ISO, retornar
+    if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return fechaStr
+    
+    // Si está en formato DD/MM/YYYY o DD-MM-YYYY
+    const partes = fechaStr.split(/[\/\-]/)
+    if (partes.length === 3) {
+      const [dia, mes, anio] = partes
+      // Asegurar que el año tenga 4 dígitos
+      const anioCompleto = anio.length === 2 ? '20' + anio : anio
+      return `${anioCompleto}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`
+    }
+    
+    return fechaStr
+  }
+
+  // Función para formatear fecha legible en español
+  const formatFechaLegible = (fechaStr) => {
+    if (!fechaStr) return 'Sin fecha'
+    
+    // Si está en formato ISO
+    if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
+      const fecha = parseISO(fechaStr)
+      if (isValid(fecha)) {
+        return format(fecha, "dd 'de' MMMM, yyyy", { locale: es })
+      }
+    }
+    
+    // Si está en otro formato, mostrar tal cual
+    return fechaStr
   }
 
   const cancelEditingEval = () => {
@@ -135,10 +178,12 @@ export default function RamoDetail() {
 
   const addEvaluacion = async (unidadIdx) => {
     const ramoActualizado = { ...ramo }
+    const today = new Date()
+    const fechaISO = today.toISOString().split('T')[0] // Formato YYYY-MM-DD
     ramoActualizado.unidades[unidadIdx].evaluaciones.push({
       id: crypto.randomUUID(),
       nombre: "Nueva Evaluación",
-      fecha: new Date().toLocaleDateString('es-CL'),
+      fecha: fechaISO,
       peso: 0,
       nota: null
     })
@@ -455,16 +500,15 @@ export default function RamoDetail() {
                                             {isEditingFecha ? (
                                               <div className="flex items-center gap-2 mt-1">
                                                 <input
-                                                  type="text"
+                                                  type="date"
                                                   value={editValue}
                                                   onChange={(e) => setEditValue(e.target.value)}
                                                   onKeyDown={(e) => {
                                                     if (e.key === 'Enter') saveEvalField(index, evalIdx, 'fecha')
                                                     if (e.key === 'Escape') cancelEditingEval()
                                                   }}
-                                                  className="bg-slate-900 border border-blue-500 rounded px-2 py-0.5 text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                                                  className="bg-slate-900 border border-blue-500 rounded px-2 py-1 text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
                                                   autoFocus
-                                                  placeholder="dd/mm/yyyy"
                                                 />
                                                 <button onClick={() => saveEvalField(index, evalIdx, 'fecha')} className="p-0.5 hover:bg-green-600 rounded text-green-400 hover:text-white">
                                                   <Check className="w-3 h-3" />
@@ -475,7 +519,7 @@ export default function RamoDetail() {
                                                 onClick={() => startEditingEval(index, evalIdx, 'fecha', eva.fecha)}
                                                 className="cursor-pointer group/fecha flex items-center gap-1 mt-1"
                                               >
-                                                <p className="text-xs text-slate-500">{eva.fecha || 'Sin fecha'}</p>
+                                                <p className="text-xs text-slate-500">{formatFechaLegible(eva.fecha)}</p>
                                                 <Edit2 className="w-2.5 h-2.5 text-slate-600 opacity-0 group-hover/fecha:opacity-100 transition-opacity" />
                                               </div>
                                             )}

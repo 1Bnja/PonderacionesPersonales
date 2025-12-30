@@ -7,6 +7,7 @@ import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, Chevr
 import Toast from '../components/Toast'
 import SuggestionModal from '../components/SuggestionModal'
 import ColorPicker, { getColorStyles } from '../components/ColorPicker'
+import UpcomingTasks from '../components/UpcomingTasks'
 
 export default function Dashboard() {
   const [ramos, setRamos] = useState([])
@@ -470,6 +471,13 @@ export default function Dashboard() {
           </div>
         </div>
         
+        {/* WIDGET DE PRÓXIMAS EVALUACIONES */}
+        <UpcomingTasks 
+          ramos={ramos} 
+          ramoColors={ramoColors}
+          onNavigateToCalendar={() => navigate('/calendar')}
+        />
+
         {/* BOTÓN CREAR SEMESTRE */}
         <div className="flex justify-end">
             <button
