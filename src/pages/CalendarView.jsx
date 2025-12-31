@@ -321,7 +321,7 @@ export default function CalendarView() {
 
         {/* Título */}
         <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-          Calendario y Tareas
+           Calendario y Tareas
         </h1>
 
         {viewMode === 'calendar' ? (
