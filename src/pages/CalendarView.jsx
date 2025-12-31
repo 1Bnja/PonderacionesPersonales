@@ -144,7 +144,7 @@ export default function CalendarView() {
                 ramoId: ramo.id,
                 ramoColor: ramoColors[ramo.id] || 'Azul',
                 unidadNombre: unidad.nombre,
-                completed: evaluacion.nota !== null && evaluacion.nota !== undefined,
+                completed: evaluacion.completada || (evaluacion.nota !== null && evaluacion.nota !== undefined),
                 peso: evaluacion.peso,
                 nota: evaluacion.nota
               })
@@ -260,6 +260,48 @@ export default function CalendarView() {
     )
     setCustomTasks(updatedTasks)
     await saveCustomTasks(updatedTasks)
+  }
+
+  // Marcar/desmarcar evaluación como completada
+  const toggleEvaluacionCompletion = async (ramoId, evaluacionId) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Encontrar y actualizar la evaluación
+      const ramosActualizados = ramos.map(ramo => {
+        if (ramo.id === ramoId) {
+          return {
+            ...ramo,
+            unidades: ramo.unidades.map(unidad => ({
+              ...unidad,
+              evaluaciones: unidad.evaluaciones.map(evaluacion => {
+                if (evaluacion.id === evaluacionId) {
+                  return {
+                    ...evaluacion,
+                    completada: !evaluacion.completada
+                  }
+                }
+                return evaluacion
+              })
+            }))
+          }
+        }
+        return ramo
+      })
+
+      // Guardar en Supabase
+      await supabase
+        .from('notas')
+        .update({ ramos: ramosActualizados })
+        .eq('user_id', user.id)
+
+      setRamos(ramosActualizados)
+      setToast({ message: 'Estado actualizado', type: 'success' })
+    } catch (error) {
+      console.error('Error al marcar evaluación:', error)
+      setToast({ message: 'Error al actualizar', type: 'error' })
+    }
   }
 
   if (loading) {
@@ -425,6 +467,7 @@ export default function CalendarView() {
                   events={getEventsForDay(selectedDay)}
                   onDeleteTask={handleDeleteTask}
                   onToggleTask={toggleTaskCompletion}
+                  onToggleEvaluacion={toggleEvaluacionCompletion}
                 />
               </div>
             )}
@@ -434,6 +477,7 @@ export default function CalendarView() {
             events={allEvents}
             onDeleteTask={handleDeleteTask}
             onToggleTask={toggleTaskCompletion}
+            onToggleEvaluacion={toggleEvaluacionCompletion}
           />
         )}
       </div>
@@ -508,7 +552,7 @@ export default function CalendarView() {
 }
 
 // Componente para mostrar eventos de un día
-function DayEvents({ events, onDeleteTask, onToggleTask }) {
+function DayEvents({ events, onDeleteTask, onToggleTask, onToggleEvaluacion }) {
   if (events.length === 0) {
     return <p className="text-slate-400 text-center py-4">No hay eventos este día</p>
   }
@@ -521,6 +565,7 @@ function DayEvents({ events, onDeleteTask, onToggleTask }) {
           event={event}
           onDeleteTask={onDeleteTask}
           onToggleTask={onToggleTask}
+          onToggleEvaluacion={onToggleEvaluacion}
         />
       ))}
     </div>
@@ -528,7 +573,7 @@ function DayEvents({ events, onDeleteTask, onToggleTask }) {
 }
 
 // Tarjeta de evento
-function EventCard({ event, onDeleteTask, onToggleTask }) {
+function EventCard({ event, onDeleteTask, onToggleTask, onToggleEvaluacion }) {
   const isEvaluacion = event.type === 'evaluacion'
   const colorStyles = isEvaluacion ? getColorStyles(event.ramoColor) : null
 
@@ -573,29 +618,24 @@ function EventCard({ event, onDeleteTask, onToggleTask }) {
         </div>
 
         <div className="flex flex-col gap-2">
+          <button
+            onClick={() => isEvaluacion ? onToggleEvaluacion(event.ramoId, event.id) : onToggleTask(event.id)}
+            className="p-1.5 hover:bg-slate-600 rounded transition-colors"
+            title={event.completed ? 'Marcar pendiente' : 'Marcar completada'}
+          >
+            {event.completed ? (
+              <CheckCircle2 className="w-5 h-5 text-green-500" />
+            ) : (
+              <Circle className="w-5 h-5 text-slate-400" />
+            )}
+          </button>
           {!isEvaluacion && (
-            <>
-              <button
-                onClick={() => onToggleTask(event.id)}
-                className="p-1.5 hover:bg-slate-600 rounded transition-colors"
-                title={event.completed ? 'Marcar pendiente' : 'Marcar completada'}
-              >
-                {event.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                ) : (
-                  <Circle className="w-5 h-5 text-slate-400" />
-                )}
-              </button>
-              <button
-                onClick={() => onDeleteTask(event.id)}
-                className="p-1.5 hover:bg-red-600 rounded transition-colors text-red-400"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </>
-          )}
-          {isEvaluacion && event.completed && (
-            <CheckCircle2 className="w-5 h-5 text-green-500" />
+            <button
+              onClick={() => onDeleteTask(event.id)}
+              className="p-1.5 hover:bg-red-600 rounded transition-colors text-red-400"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           )}
         </div>
       </div>
@@ -604,7 +644,7 @@ function EventCard({ event, onDeleteTask, onToggleTask }) {
 }
 
 // Vista de lista
-function ListView({ events, onDeleteTask, onToggleTask }) {
+function ListView({ events, onDeleteTask, onToggleTask, onToggleEvaluacion }) {
   const today = new Date()
   const futureEvents = events.filter(e => e.date >= today)
   const pastEvents = events.filter(e => e.date < today)
@@ -624,7 +664,12 @@ function ListView({ events, onDeleteTask, onToggleTask }) {
                 <p className="text-xs text-slate-400">
                   {format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: es })}
                 </p>
-                <EventCard event={event} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask} />
+                <EventCard 
+                  event={event} 
+                  onDeleteTask={onDeleteTask} 
+                  onToggleTask={onToggleTask}
+                  onToggleEvaluacion={onToggleEvaluacion}
+                />
               </div>
             ))}
           </div>
@@ -645,7 +690,12 @@ function ListView({ events, onDeleteTask, onToggleTask }) {
                 <p className="text-xs text-slate-500">
                   {format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: es })}
                 </p>
-                <EventCard event={event} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask} />
+                <EventCard 
+                  event={event} 
+                  onDeleteTask={onDeleteTask} 
+                  onToggleTask={onToggleTask}
+                  onToggleEvaluacion={onToggleEvaluacion}
+                />
               </div>
             ))}
           </div>
