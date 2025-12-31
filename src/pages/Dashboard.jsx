@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { magicParser } from '../utils/magicParser'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
-import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle, User, Lightbulb } from 'lucide-react'
+import { LogOut, Plus, Save, Trash2, Calculator, AlertCircle, CheckCircle, ChevronDown, ChevronRight, FolderPlus, FileText, X, ClipboardList, BarChart3, Target, Edit2, Check, HelpCircle, UserCircle, User, Lightbulb, Calendar } from 'lucide-react'
 import Toast from '../components/Toast'
 import SuggestionModal from '../components/SuggestionModal'
 import ColorPicker, { getColorStyles } from '../components/ColorPicker'
@@ -46,6 +46,9 @@ export default function Dashboard() {
 
   // MODAL SUGERENCIAS
   const [showSuggestionModal, setShowSuggestionModal] = useState(false)
+
+  // SECCIÓN EXPLICATIVA COLAPSABLE
+  const [showExplanation, setShowExplanation] = useState(false)
 
   const navigate = useNavigate()
 
@@ -419,56 +422,122 @@ export default function Dashboard() {
 
       <div className="max-w-5xl mx-auto space-y-6">
 
-        {/* SECCIÓN EXPLICATIVA */}
-        <div className="bg-[#242B3D] border border-[#2E3648] rounded-2xl p-6 shadow-lg">
-          <div className="flex items-start gap-4">
-            <div className="flex-1">
-              <h2 className="text-xl font-bold text-[#E2E8F0] mb-2">¿Qué es Modo Azúl?</h2>
-              <p className="text-[#94A3B8] text-sm mb-6 leading-relaxed">
-                Es tu calculadora inteligente de notas universitarias. Importa directamente desde UTalmatico,
-                calcula automáticamente tus promedios ponderados y descubre qué nota necesitas en tus evaluaciones
-                pendientes para aprobar cada ramo.
-              </p>
+        {/* SECCIÓN EXPLICATIVA COLAPSABLE */}
+        <div className="bg-[#242B3D] border border-[#2E3648] rounded-2xl overflow-hidden shadow-lg">
+          <button
+            onClick={() => setShowExplanation(!showExplanation)}
+            className="w-full flex items-center justify-between p-4 hover:bg-[#2A3142] transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
+                <HelpCircle className="w-5 h-5 text-[#7AA7EC]" />
+              </div>
+              <div className="text-left">
+                <h2 className="text-lg font-bold text-[#E2E8F0]">¿Cómo funciona Modo Azúl?</h2>
+                <p className="text-xs text-[#94A3B8]">
+                  {showExplanation ? 'Haz clic para ocultar' : 'Haz clic para ver las características'}
+                </p>
+              </div>
+            </div>
+            <ChevronDown className={`w-5 h-5 text-[#94A3B8] transition-transform duration-300 ${showExplanation ? 'rotate-180' : ''}`} />
+          </button>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
-                        <ClipboardList className="w-5 h-5 text-[#7AA7EC]" />
-                    </div>
-                    <h3 className="font-bold text-[#E2E8F0] text-sm">1. Importa</h3>
-                  </div>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
-                    Copia y pega tus notas desde UTalmatico. El sistema detecta automáticamente ramos, evaluaciones y ponderaciones.
-                  </p>
-                </div>
+          {showExplanation && (
+            <div className="px-4 pb-4 animate-in slide-in-from-top duration-300">
+              <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
+                <p className="text-[#94A3B8] text-sm mb-4 leading-relaxed">
+                  Tu calculadora inteligente de notas universitarias con importación automática, 
+                  gestión visual por semestres, calendario de evaluaciones y análisis predictivo de notas.
+                </p>
 
-                <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
-                        <BarChart3 className="w-5 h-5 text-[#7AA7EC]" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
+                        <ClipboardList className="w-4 h-4 text-[#7AA7EC]" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#E2E8F0] text-sm">Importación Inteligente</h3>
+                        <p className="text-xs text-[#94A3B8] leading-relaxed">
+                          Copia y pega directamente desde UTalmatico. Detección automática de ramos, evaluaciones y ponderaciones.
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="font-bold text-[#E2E8F0] text-sm">2. Visualiza</h3>
                   </div>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
-                    Organiza tus ramos por semestres. Ve tu promedio actual, progreso y estado de cada ramo en tiempo real.
-                  </p>
-                </div>
 
-                <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
-                        <Target className="w-5 h-5 text-[#7AA7EC]" />
+                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
+                        <BarChart3 className="w-4 h-4 text-[#7AA7EC]" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#E2E8F0] text-sm">Organización por Semestres</h3>
+                        <p className="text-xs text-[#94A3B8] leading-relaxed">
+                          Gestiona tus ramos con carpetas personalizables, colores y seguimiento de progreso en tiempo real.
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="font-bold text-[#E2E8F0] text-sm">3. Planifica</h3>
                   </div>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
-                    Calcula la nota mínima que necesitas en las evaluaciones restantes. Simula diferentes escenarios.
-                  </p>
+
+                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
+                        <Calendar className="w-4 h-4 text-[#7AA7EC]" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#E2E8F0] text-sm">Calendario de Evaluaciones</h3>
+                        <p className="text-xs text-[#94A3B8] leading-relaxed">
+                          Visualiza todas tus evaluaciones en un calendario. Crea tareas personalizadas y recibe recordatorios.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
+                        <Target className="w-4 h-4 text-[#7AA7EC]" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#E2E8F0] text-sm">Calculadora Predictiva</h3>
+                        <p className="text-xs text-[#94A3B8] leading-relaxed">
+                          Calcula la nota mínima necesaria en evaluaciones pendientes. Simula escenarios y planifica tu éxito.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
+                        <Edit2 className="w-4 h-4 text-[#7AA7EC]" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#E2E8F0] text-sm">Edición en Tiempo Real</h3>
+                        <p className="text-xs text-[#94A3B8] leading-relaxed">
+                          Edita ramos, evaluaciones, fechas y ponderaciones con clic directo. Cambios instantáneos y sincronizados.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
+                        <UserCircle className="w-4 h-4 text-[#7AA7EC]" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#E2E8F0] text-sm">Personalización Total</h3>
+                        <p className="text-xs text-[#94A3B8] leading-relaxed">
+                          Temas de colores para semestres y ramos. Avatar personalizable y experiencia adaptada a ti.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
         
         {/* WIDGET DE PRÓXIMAS EVALUACIONES */}
