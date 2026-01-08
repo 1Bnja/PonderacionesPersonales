@@ -47,9 +47,8 @@ export default function AnimatedGridPattern() {
 
   // Configuración de animación compartida para evitar recrear objetos
   const animationConfig = useMemo(() => ({
-    opacity: [0, 0.6, 0],
+    opacity: [0, 1, 0],
     scale: [0.8, 1, 0.8],
-    backgroundColor: ['rgba(122, 167, 236, 0)', 'rgba(122, 167, 236, 0.2)', 'rgba(122, 167, 236, 0)'],
   }), [])
 
   const initialConfig = useMemo(() => ({
@@ -87,7 +86,7 @@ export default function AnimatedGridPattern() {
         {squares.map((square) => (
           <motion.div
             key={square.id}
-            className="absolute w-10 h-10 border border-[#7AA7EC]"
+            className="absolute w-10 h-10 border border-[#7AA7EC] bg-[#7AA7EC]/20"
             style={{
               left: `${square.x * 40}px`,
               top: `${square.y * 40}px`,
