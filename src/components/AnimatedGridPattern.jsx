@@ -10,19 +10,19 @@ export default function AnimatedGridPattern() {
       const newSquares = []
 
       // Calcular cuántos cuadros caben en el viewport con margen extra por el skew
-      const cols = Math.ceil(window.innerWidth / 40) + 15 // +15 para cubrir área extra con el skew
+      const cols = Math.ceil(window.innerWidth / 40) + 15
       const rows = Math.ceil(window.innerHeight / 40) + 15
 
-      // Reducir número de cuadros para mejor rendimiento (máximo 40)
-      const numSquares = Math.min(40, Math.floor((cols * rows) / 20))
+      // Reducir MUCHO el número de cuadros para mejor rendimiento (máximo 20)
+      const numSquares = Math.min(20, Math.floor((cols * rows) / 30))
 
       for (let i = 0; i < numSquares; i++) {
         newSquares.push({
           id: i,
-          x: Math.floor(Math.random() * cols), // Columna aleatoria basada en el viewport
-          y: Math.floor(Math.random() * rows), // Fila aleatoria basada en el viewport
-          delay: Math.random() * 3, // Delay aleatorio entre 0-3s
-          duration: 2 + Math.random() * 2, // Duración entre 2-4s
+          x: Math.floor(Math.random() * cols),
+          y: Math.floor(Math.random() * rows),
+          delay: Math.random() * 3,
+          duration: 2 + Math.random() * 2,
         })
       }
 
@@ -31,14 +31,14 @@ export default function AnimatedGridPattern() {
 
     generateSquares()
 
-    // Regenerar cuadros si cambia el tamaño de la ventana (con debounce)
+    // Regenerar cuadros si cambia el tamaño de la ventana (con debounce más largo)
     let resizeTimeout
     const handleResize = () => {
       clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(generateSquares, 250)
+      resizeTimeout = setTimeout(generateSquares, 500)
     }
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize, { passive: true })
     return () => {
       window.removeEventListener('resize', handleResize)
       clearTimeout(resizeTimeout)
@@ -82,7 +82,7 @@ export default function AnimatedGridPattern() {
       </svg>
 
       {/* Cuadros animados que se iluminan */}
-      <div className="absolute inset-0" style={{ transform: 'translateZ(0)' }}>
+      <div className="absolute inset-0" style={{ transform: 'translate3d(0,0,0)' }}>
         {squares.map((square) => (
           <motion.div
             key={square.id}
@@ -90,8 +90,7 @@ export default function AnimatedGridPattern() {
             style={{
               left: `${square.x * 40}px`,
               top: `${square.y * 40}px`,
-              willChange: 'opacity, transform',
-              transform: 'translateZ(0)',
+              transform: 'translate3d(0,0,0)',
             }}
             initial={initialConfig}
             animate={animationConfig}
