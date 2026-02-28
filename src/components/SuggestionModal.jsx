@@ -82,10 +82,11 @@ export default function SuggestionModal({ isOpen, onClose }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Nombre (opcional) */}
           <div>
-            <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
+            <label htmlFor="suggestion-name" className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
               Tu nombre (opcional)
             </label>
             <input
+              id="suggestion-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -97,10 +98,11 @@ export default function SuggestionModal({ isOpen, onClose }) {
 
           {/* Email (opcional) */}
           <div>
-            <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
+            <label htmlFor="suggestion-email" className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
               Tu email (opcional)
             </label>
             <input
+              id="suggestion-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -112,10 +114,11 @@ export default function SuggestionModal({ isOpen, onClose }) {
 
           {/* Sugerencia */}
           <div>
-            <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
+            <label htmlFor="suggestion-text" className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
               Tu sugerencia <span className="text-red-400">*</span>
             </label>
             <textarea
+              id="suggestion-text"
               value={suggestion}
               onChange={(e) => setSuggestion(e.target.value)}
               placeholder="Comparte tus ideas para mejorar Modo Azúl..."

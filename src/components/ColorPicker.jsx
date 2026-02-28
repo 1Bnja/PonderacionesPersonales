@@ -2,7 +2,7 @@ import React from 'react'
 import { Check } from 'lucide-react'
 
 // Paleta de colores pasteles oscuros que combinan con el tema
-export const COLOR_PALETTE = [
+const COLOR_PALETTE = [
   { name: 'Azul', bg: '#7AA7EC', border: '#6A96DB', light: '#7AA7EC20' },      // Color original
   { name: 'Celeste', bg: '#9BC7F0', border: '#8BB7E0', light: '#9BC7F020' },   // Accent original
   { name: 'Lavanda', bg: '#B4A7F0', border: '#A497E0', light: '#B4A7F020' },

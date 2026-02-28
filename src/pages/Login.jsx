@@ -63,10 +63,11 @@ export default function Login() {
         {/* Formulario */}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo</label>
+            <label htmlFor="login-email" className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo</label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
               <input
+                id="login-email"
                 type="email"
                 placeholder="correo@ejemplo.com"
                 className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -78,10 +79,11 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
+            <label htmlFor="login-password" className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
               <input
+                id="login-password"
                 type="password"
                 placeholder="••••••••"
                 className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"

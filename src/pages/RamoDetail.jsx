@@ -324,7 +324,6 @@ export default function RamoDetail() {
                     if (e.key === 'Escape') cancelEditingRamo()
                   }}
                   className="flex-1 bg-slate-900 border border-blue-500 rounded-lg px-4 py-2 text-white text-2xl md:text-4xl font-bold focus:ring-2 focus:ring-blue-500 outline-none"
-                  autoFocus
                 />
                 <button onClick={() => saveRamoField('nombre')} className="p-2 hover:bg-green-600 rounded-lg text-green-400 hover:text-white">
                   <Check className="w-5 h-5" />
@@ -335,7 +334,10 @@ export default function RamoDetail() {
               </div>
             ) : (
               <div
+                role="button"
+                tabIndex={0}
                 onClick={() => startEditingRamo('nombre', ramo.nombre)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingRamo('nombre', ramo.nombre) }}
                 className="cursor-pointer group/ramo-nombre mb-2 inline-flex items-center gap-2"
               >
                 <h1 className="text-2xl md:text-4xl font-bold text-white">{ramo.nombre}</h1>
@@ -378,7 +380,7 @@ export default function RamoDetail() {
             </div>
 
             {unidades.map((unidad, index) => (
-                <div key={index} className="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden">
+                <div key={unidad.id} className="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden">
                     {/* Header de la Unidad */}
                     <div className="bg-slate-800 p-4 flex justify-between items-center border-b border-slate-700 group">
                         <div className="flex-1">
@@ -393,7 +395,6 @@ export default function RamoDetail() {
                                   if (e.key === 'Escape') cancelEditingUnidad()
                                 }}
                                 className="flex-1 bg-slate-900 border border-blue-500 rounded px-2 py-1 text-white text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
-                                autoFocus
                               />
                               <button onClick={() => saveUnidadField(index, 'nombre')} className="p-1 hover:bg-green-600 rounded text-green-400 hover:text-white">
                                 <Check className="w-3.5 h-3.5" />
@@ -401,7 +402,10 @@ export default function RamoDetail() {
                             </div>
                           ) : (
                             <div
+                              role="button"
+                              tabIndex={0}
                               onClick={() => startEditingUnidad(index, 'nombre', unidad.nombre)}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingUnidad(index, 'nombre', unidad.nombre) }}
                               className="flex items-center gap-2 cursor-pointer group/nombre"
                             >
                               <h4 className="font-bold text-white">{unidad.nombre}</h4>
@@ -422,7 +426,6 @@ export default function RamoDetail() {
                                   if (e.key === 'Escape') cancelEditingUnidad()
                                 }}
                                 className="w-16 bg-slate-900 border border-blue-500 rounded px-2 py-0.5 text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
-                                autoFocus
                               />
                               <span className="text-xs text-slate-400">% del ramo</span>
                               <button onClick={() => saveUnidadField(index, 'peso')} className="p-0.5 hover:bg-green-600 rounded text-green-400 hover:text-white">
@@ -431,7 +434,10 @@ export default function RamoDetail() {
                             </div>
                           ) : (
                             <div
+                              role="button"
+                              tabIndex={0}
                               onClick={() => startEditingUnidad(index, 'peso', unidad.peso)}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingUnidad(index, 'peso', unidad.peso) }}
                               className="flex items-center gap-2 mt-1 cursor-pointer group/peso"
                             >
                               <span className="text-xs text-slate-400">Ponderación: {unidad.peso}% del ramo</span>
@@ -463,7 +469,7 @@ export default function RamoDetail() {
                             const isEditingNota = editingEval?.unidadIdx === index && editingEval?.evalIdx === evalIdx && editingEval?.field === 'nota'
 
                             return (
-                                <div key={evalIdx} className="p-4 flex justify-between items-center hover:bg-slate-700/30 transition-colors group">
+                                <div key={eva.id} className="p-4 flex justify-between items-center hover:bg-slate-700/30 transition-colors group">
                                     <div className="flex-1 flex items-start gap-3">
                                         {isEditingNombre ? (
                                           <div className="flex-1 flex items-center gap-2">
@@ -476,7 +482,6 @@ export default function RamoDetail() {
                                                 if (e.key === 'Escape') cancelEditingEval()
                                               }}
                                               className="flex-1 bg-slate-900 border border-blue-500 rounded px-2 py-1 text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                                              autoFocus
                                             />
                                             <button onClick={() => saveEvalField(index, evalIdx, 'nombre')} className="p-1 hover:bg-green-600 rounded text-green-400 hover:text-white">
                                               <Save className="w-3.5 h-3.5" />
@@ -488,7 +493,10 @@ export default function RamoDetail() {
                                         ) : (
                                           <div className="flex-1">
                                             <div
+                                              role="button"
+                                              tabIndex={0}
                                               onClick={() => startEditingEval(index, evalIdx, 'nombre', eva.nombre)}
+                                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingEval(index, evalIdx, 'nombre', eva.nombre) }}
                                               className="cursor-pointer group/nombre"
                                             >
                                               <div className="flex items-center gap-2">
@@ -508,7 +516,6 @@ export default function RamoDetail() {
                                                     if (e.key === 'Escape') cancelEditingEval()
                                                   }}
                                                   className="bg-slate-900 border border-blue-500 rounded px-2 py-1 text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
-                                                  autoFocus
                                                 />
                                                 <button onClick={() => saveEvalField(index, evalIdx, 'fecha')} className="p-0.5 hover:bg-green-600 rounded text-green-400 hover:text-white">
                                                   <Check className="w-3 h-3" />
@@ -516,7 +523,10 @@ export default function RamoDetail() {
                                               </div>
                                             ) : (
                                               <div
+                                                role="button"
+                                                tabIndex={0}
                                                 onClick={() => startEditingEval(index, evalIdx, 'fecha', eva.fecha)}
+                                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingEval(index, evalIdx, 'fecha', eva.fecha) }}
                                                 className="cursor-pointer group/fecha flex items-center gap-1 mt-1"
                                               >
                                                 <p className="text-xs text-slate-500">{formatFechaLegible(eva.fecha)}</p>
@@ -541,7 +551,6 @@ export default function RamoDetail() {
                                                 if (e.key === 'Escape') cancelEditingEval()
                                               }}
                                               className="w-14 bg-slate-900 border border-blue-500 rounded px-2 py-1 text-center text-white text-xs focus:ring-2 focus:ring-blue-500 outline-none"
-                                              autoFocus
                                             />
                                             <span className="text-xs text-slate-400">%</span>
                                             <button onClick={() => saveEvalField(index, evalIdx, 'peso')} className="p-0.5 hover:bg-green-600 rounded text-green-400 hover:text-white">
@@ -550,7 +559,10 @@ export default function RamoDetail() {
                                           </div>
                                         ) : (
                                           <div
+                                            role="button"
+                                            tabIndex={0}
                                             onClick={() => startEditingEval(index, evalIdx, 'peso', eva.peso)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingEval(index, evalIdx, 'peso', eva.peso) }}
                                             className="cursor-pointer group/peso px-2 py-1 rounded hover:bg-slate-800"
                                           >
                                             <div className="flex items-center gap-1">
@@ -574,7 +586,6 @@ export default function RamoDetail() {
                                                         if (e.key === 'Escape') cancelEditingEval()
                                                     }}
                                                     className="w-16 bg-slate-900 border border-blue-500 rounded px-2 py-1 text-center text-white focus:ring-2 focus:ring-blue-500 outline-none"
-                                                    autoFocus
                                                     placeholder="--"
                                                 />
                                                 <button
@@ -592,7 +603,10 @@ export default function RamoDetail() {
                                             </div>
                                         ) : (
                                             <div
+                                              role="button"
+                                              tabIndex={0}
                                               onClick={() => startEditingEval(index, evalIdx, 'nota', eva.nota)}
+                                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingEval(index, evalIdx, 'nota', eva.nota) }}
                                               className="flex items-center gap-2 cursor-pointer group/nota px-2 py-1 rounded hover:bg-slate-800"
                                             >
                                                 {eva.nota ? (

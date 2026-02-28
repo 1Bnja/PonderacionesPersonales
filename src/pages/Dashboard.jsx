@@ -572,9 +572,9 @@ export default function Dashboard() {
 
                     <div className="space-y-6">
                         <div>
-                            <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
+                            <label htmlFor="new-semester-name" className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
                             <input
-                                autoFocus
+                                id="new-semester-name"
                                 type="text"
                                 value={newSemesterName}
                                 onChange={(e) => setNewSemesterName(e.target.value)}
@@ -624,9 +624,9 @@ export default function Dashboard() {
 
                     <div className="space-y-6">
                         <div>
-                            <label className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
+                            <label htmlFor="edit-semester-name" className="block text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-2">Nombre del Semestre</label>
                             <input
-                                autoFocus
+                                id="edit-semester-name"
                                 type="text"
                                 value={editedSemesterName}
                                 onChange={(e) => setEditedSemesterName(e.target.value)}
@@ -762,8 +762,11 @@ export default function Dashboard() {
 
                             {/* CABECERA DEL SEMESTRE */}
                             <div
+                                role="button"
+                                tabIndex={0}
                                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#2A3142] transition-colors select-none group"
                                 onClick={() => toggleSemestre(semestre)}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSemestre(semestre) }}
                                 style={{ backgroundColor: isOpen ? semesterColor.light : 'transparent' }}
                             >
                                 <div className="flex items-center gap-3 flex-1">
@@ -895,7 +898,10 @@ function RamoCard({ ramo, onDelete, ramoColor, onColorChange }) {
 
     return (
         <div
+            role="button"
+            tabIndex={0}
             onClick={() => navigate(`/ramo/${ramo.id}`)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/ramo/${ramo.id}`) }}
             className="bg-[#242B3D] rounded-2xl p-5 border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 relative group cursor-pointer"
             style={{ borderColor: colorStyles.border }}
         >
@@ -918,6 +924,7 @@ function RamoCard({ ramo, onDelete, ramoColor, onColorChange }) {
             {/* Mini selector de colores */}
             {showColorPicker && (
                 <div
+                    role="presentation"
                     className="absolute top-14 right-4 bg-[#242B3D] border border-[#2E3648] rounded-xl p-3 shadow-2xl z-20 animate-in fade-in zoom-in-95 duration-200"
                     onClick={(e) => e.stopPropagation()}
                 >

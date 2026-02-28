@@ -399,7 +399,7 @@ export default function CalendarView() {
 
               {/* Días del calendario */}
               <div className="grid grid-cols-7 gap-2">
-                {calendarDays.map((day, idx) => {
+                {calendarDays.map((day) => {
                   const eventsForDay = getEventsForDay(day)
                   const isCurrentMonth = isSameMonth(day, currentMonth)
                   const isCurrentDay = isToday(day)
@@ -407,7 +407,7 @@ export default function CalendarView() {
 
                   return (
                     <button
-                      key={idx}
+                      key={day.toISOString()}
                       onClick={() => setSelectedDay(day)}
                       className={`
                         min-h-[80px] p-2 rounded-lg border transition-all
@@ -424,9 +424,9 @@ export default function CalendarView() {
                       </div>
                       {hasEvents && (
                         <div className="space-y-1">
-                          {eventsForDay.slice(0, 2).map((event, i) => (
+                          {eventsForDay.slice(0, 2).map((event) => (
                             <div
-                              key={i}
+                              key={event.id}
                               className={`text-xs px-1.5 py-0.5 rounded truncate ${
                                 event.type === 'evaluacion'
                                   ? getColorStyles(event.ramoColor).bg + ' ' + getColorStyles(event.ramoColor).text
@@ -498,8 +498,9 @@ export default function CalendarView() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Título *</label>
+                <label htmlFor="task-title" className="block text-sm font-medium mb-2">Título *</label>
                 <input
+                  id="task-title"
                   type="text"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
@@ -509,8 +510,9 @@ export default function CalendarView() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Fecha *</label>
+                <label htmlFor="task-date" className="block text-sm font-medium mb-2">Fecha *</label>
                 <input
+                  id="task-date"
                   type="date"
                   value={newTaskDate}
                   onChange={(e) => setNewTaskDate(e.target.value)}
@@ -519,8 +521,9 @@ export default function CalendarView() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Descripción (opcional)</label>
+                <label htmlFor="task-description" className="block text-sm font-medium mb-2">Descripción (opcional)</label>
                 <textarea
+                  id="task-description"
                   value={newTaskDescription}
                   onChange={(e) => setNewTaskDescription(e.target.value)}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"

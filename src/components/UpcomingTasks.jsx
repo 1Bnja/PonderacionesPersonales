@@ -119,8 +119,8 @@ export default function UpcomingTasks({ ramos, ramoColors, onNavigateToCalendar 
             Atrasadas ({evaluacionesPasadas.length})
           </h3>
           <div className="space-y-2">
-            {evaluacionesPasadas.map((evaluacion, idx) => (
-              <TaskItem key={`past-${idx}`} evaluacion={evaluacion} isPast={true} />
+            {evaluacionesPasadas.map((evaluacion) => (
+              <TaskItem key={evaluacion.id} evaluacion={evaluacion} isPast={true} />
             ))}
           </div>
         </div>
@@ -129,8 +129,8 @@ export default function UpcomingTasks({ ramos, ramoColors, onNavigateToCalendar 
       {/* Próximas Evaluaciones */}
       {proximasEvaluaciones.length > 0 ? (
         <div className="space-y-2">
-          {proximasEvaluaciones.map((evaluacion, idx) => (
-            <TaskItem key={`upcoming-${idx}`} evaluacion={evaluacion} isPast={false} />
+          {proximasEvaluaciones.map((evaluacion) => (
+            <TaskItem key={evaluacion.id} evaluacion={evaluacion} isPast={false} />
           ))}
         </div>
       ) : (

@@ -210,10 +210,11 @@ export default function Register() {
           {/* Nombre, Apellido y Usuario */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre</label>
+              <label htmlFor="reg-nombre" className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre</label>
               <div className="relative">
                 <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                 <input
+                  id="reg-nombre"
                   type="text"
                   placeholder="Tu nombre"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -225,10 +226,11 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Apellido</label>
+              <label htmlFor="reg-apellido" className="block text-sm font-medium text-[#E2E8F0] mb-1">Apellido</label>
               <div className="relative">
                 <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                 <input
+                  id="reg-apellido"
                   type="text"
                   placeholder="Tu apellido"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -240,10 +242,11 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Usuario</label>
+              <label htmlFor="reg-username" className="block text-sm font-medium text-[#E2E8F0] mb-1">Usuario</label>
               <div className="relative">
                 <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                 <input
+                  id="reg-username"
                   type="text"
                   placeholder="usuario123"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -259,10 +262,11 @@ export default function Register() {
           {/* Universidad y Correo */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
+              <label htmlFor="reg-universidad" className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
               <div className="relative">
                 <GraduationCap className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5 pointer-events-none z-10" />
                 <select
+                  id="reg-universidad"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none appearance-none cursor-pointer"
                   value={universidad}
                   onChange={(e) => setUniversidad(e.target.value)}
@@ -279,10 +283,11 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo electrónico</label>
+              <label htmlFor="reg-email" className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo electrónico</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                 <input
+                  id="reg-email"
                   type="email"
                   placeholder="correo@ejemplo.com"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -297,10 +302,11 @@ export default function Register() {
           {/* Contraseñas */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
+              <label htmlFor="reg-password" className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                 <input
+                  id="reg-password"
                   type="password"
                   placeholder="Mínimo 6 caracteres"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -313,10 +319,11 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Confirmar contraseña</label>
+              <label htmlFor="reg-confirm-password" className="block text-sm font-medium text-[#E2E8F0] mb-1">Confirmar contraseña</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                 <input
+                  id="reg-confirm-password"
                   type="password"
                   placeholder="Repite tu contraseña"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"

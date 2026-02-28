@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { LazyMotion, m, domAnimation } from 'framer-motion'
 import { useEffect, useState, useMemo } from 'react'
 
 export default function AnimatedGridPattern() {
@@ -57,52 +57,54 @@ export default function AnimatedGridPattern() {
   }), [])
 
   return (
-    <div className="absolute inset-0 -top-[20%] -bottom-[20%] overflow-hidden pointer-events-none skew-y-12 opacity-70">
-      {/* Grid SVG de fondo */}
-      <svg
-        className="absolute inset-0 w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <pattern
-            id="grid-pattern"
-            width="40"
-            height="40"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M 40 0 L 0 0 0 40"
-              fill="none"
-              stroke="#2E3648"
-              strokeWidth="1"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-      </svg>
+    <LazyMotion features={domAnimation}>
+      <div className="absolute inset-0 -top-[20%] -bottom-[20%] overflow-hidden pointer-events-none skew-y-12 opacity-70">
+        {/* Grid SVG de fondo */}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern
+              id="grid-pattern"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="#2E3648"
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+        </svg>
 
-      {/* Cuadros animados que se iluminan */}
-      <div className="absolute inset-0" style={{ transform: 'translate3d(0,0,0)' }}>
-        {squares.map((square) => (
-          <motion.div
-            key={square.id}
-            className="absolute w-10 h-10 border border-[#7AA7EC] bg-[#7AA7EC]/20"
-            style={{
-              left: `${square.x * 40}px`,
-              top: `${square.y * 40}px`,
-              transform: 'translate3d(0,0,0)',
-            }}
-            initial={initialConfig}
-            animate={animationConfig}
-            transition={{
-              duration: square.duration,
-              delay: square.delay,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+        {/* Cuadros animados que se iluminan */}
+        <div className="absolute inset-0" style={{ transform: 'translate3d(0,0,0)' }}>
+          {squares.map((square) => (
+            <m.div
+              key={square.id}
+              className="absolute w-10 h-10 border border-[#7AA7EC] bg-[#7AA7EC]/20"
+              style={{
+                left: `${square.x * 40}px`,
+                top: `${square.y * 40}px`,
+                transform: 'translate3d(0,0,0)',
+              }}
+              initial={initialConfig}
+              animate={animationConfig}
+              transition={{
+                duration: square.duration,
+                delay: square.delay,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </LazyMotion>
   )
 }

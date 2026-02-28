@@ -296,10 +296,11 @@ export default function Profile() {
 
           {/* Email (no editable) */}
           <div className="mb-6 pb-6 border-b border-[#2E3648]">
-            <label className="block text-sm font-medium text-[#94A3B8] mb-2">Correo electrónico</label>
+            <label htmlFor="profile-email" className="block text-sm font-medium text-[#94A3B8] mb-2">Correo electrónico</label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
               <input
+                id="profile-email"
                 type="email"
                 value={user.email}
                 disabled
@@ -313,10 +314,11 @@ export default function Profile() {
           <form onSubmit={handleSaveProfile} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre</label>
+                <label htmlFor="profile-nombre" className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre</label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                   <input
+                    id="profile-nombre"
                     type="text"
                     placeholder="Tu nombre"
                     className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -328,10 +330,11 @@ export default function Profile() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Apellido</label>
+                <label htmlFor="profile-apellido" className="block text-sm font-medium text-[#E2E8F0] mb-1">Apellido</label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                   <input
+                    id="profile-apellido"
                     type="text"
                     placeholder="Tu apellido"
                     className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -344,10 +347,11 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre de usuario</label>
+              <label htmlFor="profile-username" className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre de usuario</label>
               <div className="relative">
                 <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
                 <input
+                  id="profile-username"
                   type="text"
                   placeholder="usuario123"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
@@ -360,10 +364,11 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
+              <label htmlFor="profile-universidad" className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
               <div className="relative">
                 <GraduationCap className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5 pointer-events-none z-10" />
                 <select
+                  id="profile-universidad"
                   className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none appearance-none cursor-pointer"
                   value={universidad}
                   onChange={(e) => setUniversidad(e.target.value)}
