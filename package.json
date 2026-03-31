@@ -47,6 +47,7 @@
     "vite": "^7.2.4"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.55.1"
+    "@rollup/rollup-linux-x64-gnu": "4.55.1",
+    "@swc/core-linux-x64-gnu": "1.15.8"
   }
 }
