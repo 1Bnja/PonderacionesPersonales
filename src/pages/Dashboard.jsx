@@ -463,46 +463,182 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-2">
+            <Card className="bg-[var(--color-surface)]/80">
+              <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-[var(--color-text)]">Semestres</h2>
+                  <p className="text-xs text-[var(--color-text-muted)]">Tu espacio principal de trabajo diario.</p>
+                </div>
+
+                <Button
+                  onClick={openCreateModal}
+                  size="sm"
+                  className="gap-2 self-start sm:self-auto"
+                >
+                  <FolderPlus className="w-4 h-4" /> Nuevo Semestre
+                </Button>
+              </CardContent>
+            </Card>
+
+            {todosLosSemestres.length === 0 ? (
+              <div className="rounded-3xl border-2 border-dashed border-[#2E3648] bg-[#242B3D] py-20 text-center">
+                <Calculator className="mx-auto mb-4 h-16 w-16 text-[#94A3B8]" />
+                <h3 className="text-xl font-semibold text-[#E2E8F0]">Sin semestres</h3>
+                <p className="mb-4 mt-2 text-[#94A3B8]">Crea tu primer semestre para empezar.</p>
+                <Button onClick={openCreateModal}>+ Crear Semestre</Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {todosLosSemestres.map((semestre) => {
+                  const isOpen = expandedSemesters[semestre];
+                  const ramosDeEsteSemestre = ramosPorSemestre[semestre] || [];
+                  const count = ramosDeEsteSemestre.length;
+
+                  const promedioSemestre = count > 0
+                    ? ramosDeEsteSemestre.reduce((acc, r) => acc + r.estadisticas.promedioActual, 0) / count
+                    : 0;
+
+                  const semesterColor = getColorStyles(semesterColors[semestre] || 'Azul');
+
+                  return (
+                    <div key={semestre} className="overflow-hidden rounded-2xl border bg-[#242B3D] shadow-lg transition-all" style={{ borderColor: semesterColor.border }}>
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className="group flex cursor-pointer select-none items-center justify-between p-4 transition-colors hover:bg-[#2A3142]"
+                        onClick={() => toggleSemestre(semestre)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSemestre(semestre) }}
+                        style={{ backgroundColor: isOpen ? semesterColor.light : 'transparent' }}
+                      >
+                        <div className="flex flex-1 items-center gap-3">
+                          <div className="rounded-lg p-2 transition-colors" style={{ backgroundColor: isOpen ? semesterColor.bg : '#2E3648', color: isOpen ? 'white' : '#94A3B8' }}>
+                            {isOpen ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <div>
+                                <h2 className="text-lg font-bold text-[#E2E8F0] md:text-xl">{semestre}</h2>
+                                <p className="text-xs text-[#94A3B8]">
+                                  {count === 0 ? "Carpeta vacía" : `${count} ramos`}
+                                </p>
+                              </div>
+                              <div className="ml-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                                <button
+                                  onClick={(e) => startEditingSemester(semestre, e)}
+                                  className="rounded-lg p-1.5 text-[#94A3B8] transition-colors hover:bg-[#2E3648] hover:text-[#7AA7EC]"
+                                  title="Editar semestre"
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => deleteSemester(semestre, e)}
+                                  className="rounded-lg p-1.5 text-[#94A3B8] transition-colors hover:bg-[#2E3648] hover:text-red-400"
+                                  title="Eliminar semestre"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          {count > 0 && (
+                            <div className="hidden text-right md:block">
+                              <span className="block text-[10px] font-bold uppercase text-[#94A3B8]">Promedio</span>
+                              <span className={`font-bold ${promedioSemestre >= 4.0 ? 'text-green-400' : 'text-red-400'}`}>
+                                {promedioSemestre.toFixed(1)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {isOpen && (
+                        <div className="animate-in slide-in-from-top-2 border-t border-[#2E3648] bg-[#1A1F2E] p-6 fade-in">
+                          {count > 0 ? (
+                            <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                              {ramosDeEsteSemestre.map((ramo) => (
+                                <RamoCard
+                                  key={ramo.id}
+                                  ramo={ramo}
+                                  onDelete={() => deleteRamo(ramo.id)}
+                                  ramoColor={ramoColors[ramo.id] || semesterColors[semestre] || 'Azul'}
+                                  onColorChange={(newColor) => {
+                                    const newColors = { ...ramoColors, [ramo.id]: newColor };
+                                    setRamoColors(newColors);
+                                    saveNotasToCloud(ramos, null, newColors);
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="mb-6 rounded-xl border-2 border-dashed border-[#2E3648] bg-[#242B3D] py-8 text-center text-sm italic text-[#94A3B8]">
+                              Esta carpeta está vacía. Importa tus ramos.
+                            </div>
+                          )}
+
+                          <div className="flex gap-3">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openImportModal(semestre);
+                              }}
+                              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#2E3648] bg-[#242B3D] p-3 text-sm font-medium text-[#E2E8F0] transition-all hover:border-[#7AA7EC] hover:bg-[#7AA7EC] hover:text-white"
+                            >
+                              <FileText className="h-4 w-4" />
+                              Importar desde UTalmatico
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addManualRamo(semestre);
+                              }}
+                              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#7AA7EC] bg-[#242B3D] p-3 text-sm font-medium text-[#7AA7EC] transition-all hover:bg-[#7AA7EC] hover:text-white"
+                            >
+                              <Plus className="h-4 w-4" />
+                              Crear Ramo Manual
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4 lg:sticky lg:top-6">
             <UpcomingTasks
               ramos={ramos}
               ramoColors={ramoColors}
               onNavigateToCalendar={() => navigate('/calendar')}
             />
+
+            <Card className="h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <HelpCircle className="h-4 w-4 text-[var(--color-primary)]" />
+                  Guía rápida
+                </CardTitle>
+                <CardDescription>Menos ruido visual y más foco en lo que haces cada día.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-[var(--color-text-muted)]">
+                <p>1. Crea tu semestre</p>
+                <p>2. Importa desde UTalmatico o crea ramo manual</p>
+                <p>3. Revisa próximas evaluaciones en calendario</p>
+                {ramosEnRiesgo > 0 && (
+                  <p className="text-amber-300">Tienes {ramosEnRiesgo} ramo(s) en estado crítico.</p>
+                )}
+                <Button variant="secondary" size="sm" className="w-full" onClick={() => setShowExplanation(true)}>
+                  Ver guía completa
+                </Button>
+              </CardContent>
+            </Card>
           </div>
-
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 text-[var(--color-primary)]" />
-                Guía rápida
-              </CardTitle>
-              <CardDescription>Menos ruido visual, más foco en lo importante.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-[var(--color-text-muted)]">
-              <p>1. Crea tu semestre</p>
-              <p>2. Importa desde UTalmatico o crea ramo manual</p>
-              <p>3. Revisa próximas evaluaciones en calendario</p>
-              {ramosEnRiesgo > 0 && (
-                <p className="text-amber-300">Tienes {ramosEnRiesgo} ramo(s) en estado crítico.</p>
-              )}
-              <Button variant="secondary" size="sm" className="w-full" onClick={() => setShowExplanation(true)}>
-                Ver guía completa
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* BOTÓN CREAR SEMESTRE */}
-        <div className="flex justify-end">
-          <Button
-                onClick={openCreateModal}
-            size="sm"
-            className="gap-2"
-            >
-                <FolderPlus className="w-4 h-4" /> Nuevo Semestre
-          </Button>
         </div>
 
         {/* ------------------------------------------- */}
@@ -735,144 +871,6 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        )}
-
-
-        {/* LISTA DE SEMESTRES */}
-        {todosLosSemestres.length === 0 ? (
-            <div className="text-center py-20 bg-[#242B3D] rounded-3xl border-2 border-dashed border-[#2E3648]">
-                <Calculator className="w-16 h-16 mx-auto text-[#94A3B8] mb-4" />
-                <h3 className="text-xl font-semibold text-[#E2E8F0]">Sin semestres</h3>
-                <p className="text-[#94A3B8] mt-2 mb-4">Crea tu primer semestre para empezar.</p>
-            <Button onClick={openCreateModal}>
-                    + Crear Semestre
-            </Button>
-            </div>
-        ) : (
-            <div className="space-y-4">
-                {todosLosSemestres.map((semestre) => {
-                    const isOpen = expandedSemesters[semestre];
-                    const ramosDeEsteSemestre = ramosPorSemestre[semestre] || [];
-                    const count = ramosDeEsteSemestre.length;
-                    
-                    const promedioSemestre = count > 0
-                        ? ramosDeEsteSemestre.reduce((acc, r) => acc + r.estadisticas.promedioActual, 0) / count
-                        : 0;
-
-                    const semesterColor = getColorStyles(semesterColors[semestre] || 'Azul');
-
-                    return (
-                        <div key={semestre} className="bg-[#242B3D] rounded-2xl border overflow-hidden transition-all shadow-lg" style={{ borderColor: semesterColor.border }}>
-
-                            {/* CABECERA DEL SEMESTRE */}
-                            <div
-                                role="button"
-                                tabIndex={0}
-                                className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#2A3142] transition-colors select-none group"
-                                onClick={() => toggleSemestre(semestre)}
-                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSemestre(semestre) }}
-                                style={{ backgroundColor: isOpen ? semesterColor.light : 'transparent' }}
-                            >
-                                <div className="flex items-center gap-3 flex-1">
-                                    <div className={`p-2 rounded-lg transition-colors`} style={{ backgroundColor: isOpen ? semesterColor.bg : '#2E3648', color: isOpen ? 'white' : '#94A3B8' }}>
-                                        {isOpen ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <div>
-                                                <h2 className="text-lg md:text-xl font-bold text-[#E2E8F0]">{semestre}</h2>
-                                                <p className="text-xs text-[#94A3B8]">
-                                                    {count === 0 ? "Carpeta vacía" : `${count} ramos`}
-                                                </p>
-                                            </div>
-                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                                                <button
-                                                    onClick={(e) => startEditingSemester(semestre, e)}
-                                                    className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-[#7AA7EC]"
-                                                    title="Editar semestre"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => deleteSemester(semestre, e)}
-                                                    className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-red-400"
-                                                    title="Eliminar semestre"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex items-center gap-3">
-                                    {count > 0 && (
-                                        <div className="text-right hidden md:block">
-                                            <span className="block text-[10px] text-[#94A3B8] uppercase font-bold">Promedio</span>
-                                            <span className={`font-bold ${promedioSemestre >= 4.0 ? 'text-green-400' : 'text-red-400'}`}>
-                                                {promedioSemestre.toFixed(1)}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* CONTENIDO DESPLEGABLE */}
-                            {isOpen && (
-                                <div className="p-6 border-t border-[#2E3648] bg-[#1A1F2E] animate-in fade-in slide-in-from-top-2">
-
-                                    {/* GRID DE RAMOS */}
-                                    {count > 0 ? (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                                            {ramosDeEsteSemestre.map((ramo) => (
-                                                <RamoCard
-                                                    key={ramo.id}
-                                                    ramo={ramo}
-                                                    onDelete={() => deleteRamo(ramo.id)}
-                                                    ramoColor={ramoColors[ramo.id] || semesterColors[semestre] || 'Azul'}
-                                                    onColorChange={(newColor) => {
-                                                        const newColors = { ...ramoColors, [ramo.id]: newColor };
-                                                        setRamoColors(newColors);
-                                                        saveNotasToCloud(ramos, null, newColors);
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="text-center py-8 text-[#94A3B8] text-sm italic border-2 border-dashed border-[#2E3648] rounded-xl mb-6 bg-[#242B3D]">
-                                            Esta carpeta está vacía. Importa tus ramos.
-                                        </div>
-                                    )}
-
-                                    {/* BOTONES DE ACCIÓN */}
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                openImportModal(semestre);
-                                            }}
-                                            className="flex-1 border border-[#2E3648] bg-[#242B3D] hover:bg-[#7AA7EC] hover:border-[#7AA7EC] hover:text-white text-[#E2E8F0] rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm"
-                                        >
-                                            <FileText className="w-4 h-4" />
-                                            Importar desde UTalmatico
-                                        </button>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                addManualRamo(semestre);
-                                            }}
-                                            className="flex-1 border border-[#7AA7EC] bg-[#242B3D] hover:bg-[#7AA7EC] hover:text-white text-[#7AA7EC] rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                            Crear Ramo Manual
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )
-                })}
-            </div>
         )}
       </div>
 
