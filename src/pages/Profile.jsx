@@ -3,6 +3,10 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { User, Mail, GraduationCap, ArrowLeft, Save, Camera, X } from 'lucide-react'
 import Toast from '../components/Toast'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Label } from '../components/ui/label'
 
 // Lista de instituciones de educación superior de Chile
 const universidadesChile = [
@@ -193,7 +197,7 @@ export default function Profile() {
       }
     }
 
-    const { data, error } = await supabase.auth.updateUser({
+    const { error } = await supabase.auth.updateUser({
       data: {
         nombre: nombre.trim(),
         apellido: apellido.trim(),
@@ -226,30 +230,28 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1A1F2E] text-[#E2E8F0] p-4 md:p-8">
+    <div className="min-h-screen p-4 text-[var(--color-text)] md:p-8">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 text-[#94A3B8] hover:text-[#E2E8F0] mb-4 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" /> Volver al Dashboard
-          </button>
-          <h1 className="text-3xl font-bold">Mi Perfil</h1>
-          <p className="text-[#94A3B8] mt-2">Edita tu información personal</p>
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/dashboard')}
+          className="mb-4 gap-2 px-0 text-[var(--color-text-muted)] hover:bg-transparent hover:text-[var(--color-text)]"
+        >
+          <ArrowLeft className="h-5 w-5" /> Volver al dashboard
+        </Button>
 
-        {/* Profile Card */}
-        <div className="bg-[#242B3D] border border-[#2E3648] rounded-2xl p-6 shadow-lg">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-3xl">Mi perfil</CardTitle>
+            <CardDescription>Edita tu informacion personal.</CardDescription>
+          </CardHeader>
 
-          {/* Avatar Section */}
-          <div className="flex flex-col items-center mb-6 pb-6 border-b border-[#2E3648]">
+          <CardContent>
+            <div className="mb-6 flex flex-col items-center border-b border-[var(--color-border)] pb-6">
             <div className="relative group">
-              {/* Avatar Display */}
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#7AA7EC] bg-[#1A1F2E] flex items-center justify-center">
+              <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-[var(--color-primary)] bg-[var(--color-background)]">
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -257,7 +259,6 @@ export default function Profile() {
                 )}
               </div>
 
-              {/* Upload Button Overlay */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -266,7 +267,6 @@ export default function Profile() {
                 <Camera className="w-8 h-8 text-white" />
               </button>
 
-              {/* Remove Button (if there's a new preview) */}
               {avatarFile && (
                 <button
                   type="button"
@@ -278,7 +278,6 @@ export default function Profile() {
               )}
             </div>
 
-            {/* Hidden File Input */}
             <input
               ref={fileInputRef}
               type="file"
@@ -287,41 +286,39 @@ export default function Profile() {
               className="hidden"
             />
 
-            <p className="text-sm text-[#94A3B8] mt-3 text-center">
+            <p className="mt-3 text-center text-sm text-[var(--color-text-muted)]">
               Haz click en la foto para cambiarla
               <br />
               <span className="text-xs">Máximo 2MB - JPG, PNG o GIF</span>
             </p>
-          </div>
+            </div>
 
-          {/* Email (no editable) */}
-          <div className="mb-6 pb-6 border-b border-[#2E3648]">
-            <label htmlFor="profile-email" className="block text-sm font-medium text-[#94A3B8] mb-2">Correo electrónico</label>
+          <div className="mb-6 border-b border-[var(--color-border)] pb-6">
+            <Label htmlFor="profile-email" className="mb-2 block text-[var(--color-text-muted)]">Correo electronico</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-              <input
+              <Mail className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+              <Input
                 id="profile-email"
                 type="email"
                 value={user.email}
                 disabled
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#94A3B8] cursor-not-allowed"
+                className="cursor-not-allowed pl-10 text-[var(--color-text-muted)]"
               />
             </div>
-            <p className="text-xs text-[#94A3B8] mt-1">El correo no se puede cambiar</p>
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">El correo no se puede cambiar.</p>
           </div>
 
-          {/* Formulario editable */}
           <form onSubmit={handleSaveProfile} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="profile-nombre" className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre</label>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="profile-nombre">Nombre</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                  <input
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
                     id="profile-nombre"
                     type="text"
                     placeholder="Tu nombre"
-                    className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
+                    className="pl-10"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                     required
@@ -329,15 +326,15 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="profile-apellido" className="block text-sm font-medium text-[#E2E8F0] mb-1">Apellido</label>
+              <div className="space-y-2">
+                <Label htmlFor="profile-apellido">Apellido</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                  <input
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
                     id="profile-apellido"
                     type="text"
                     placeholder="Tu apellido"
-                    className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
+                    className="pl-10"
                     value={apellido}
                     onChange={(e) => setApellido(e.target.value)}
                     required
@@ -346,15 +343,15 @@ export default function Profile() {
               </div>
             </div>
 
-            <div>
-              <label htmlFor="profile-username" className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre de usuario</label>
+            <div className="space-y-2">
+              <Label htmlFor="profile-username">Nombre de usuario</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                <input
+                <User className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                <Input
                   id="profile-username"
                   type="text"
                   placeholder="usuario123"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
+                  className="pl-10"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
@@ -363,20 +360,20 @@ export default function Profile() {
               </div>
             </div>
 
-            <div>
-              <label htmlFor="profile-universidad" className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
+            <div className="space-y-2">
+              <Label htmlFor="profile-universidad">Universidad</Label>
               <div className="relative">
-                <GraduationCap className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5 pointer-events-none z-10" />
+                <GraduationCap className="pointer-events-none absolute left-3 top-2.5 z-10 h-5 w-5 text-[var(--color-text-muted)]" />
                 <select
                   id="profile-universidad"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none appearance-none cursor-pointer"
+                  className="flex h-10 w-full cursor-pointer rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]/70 pl-10 pr-4 text-sm text-[var(--color-text)] outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/60"
                   value={universidad}
                   onChange={(e) => setUniversidad(e.target.value)}
                   required
                 >
-                  <option value="" className="bg-[#1A1F2E]">Selecciona tu institución</option>
+                  <option value="">Selecciona tu institucion</option>
                   {universidadesChile.map((uni) => (
-                    <option key={uni} value={uni} className="bg-[#1A1F2E]">
+                    <option key={uni} value={uni}>
                       {uni}
                     </option>
                   ))}
@@ -384,16 +381,17 @@ export default function Profile() {
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={loading || uploadingAvatar}
-              className="w-full bg-[#7AA7EC] hover:bg-[#6A96DB] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full gap-2"
             >
-              <Save className="w-5 h-5" />
-              {uploadingAvatar ? 'Subiendo imagen...' : loading ? 'Guardando...' : 'Guardar Cambios'}
-            </button>
+              <Save className="h-4 w-4" />
+              {uploadingAvatar ? 'Subiendo imagen...' : loading ? 'Guardando...' : 'Guardar cambios'}
+            </Button>
           </form>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

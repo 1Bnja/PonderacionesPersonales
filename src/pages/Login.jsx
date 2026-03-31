@@ -4,6 +4,11 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Lock, Mail } from 'lucide-react'
 import Toast from '../components/Toast'
 import AnimatedGridPattern from '../components/AnimatedGridPattern'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Label } from '../components/ui/label'
+import { Separator } from '../components/ui/separator'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -46,79 +51,69 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4 relative overflow-hidden">
-      {/* Animated Grid Background */}
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4">
       <AnimatedGridPattern />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-md border border-[#2E3648] relative z-10">
+      <Card className="relative z-10 w-full max-w-md">
+        <CardHeader className="space-y-2 text-center">
+          <CardTitle className="text-2xl">Modo Azul</CardTitle>
+          <CardDescription>Gestiona tus ramos y ponderaciones en un solo lugar.</CardDescription>
+        </CardHeader>
 
-        {/* Título */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-[#E2E8F0]">Modo Azúl</h1>
-          <p className="text-[#94A3B8] text-sm mt-2">Gestiona tus ramos y ponderaciones</p>
-        </div>
-
-        {/* Formulario */}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label htmlFor="login-email" className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-              <input
-                id="login-email"
-                type="email"
-                placeholder="correo@ejemplo.com"
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+        <CardContent className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="login-email">Correo</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                <Input
+                  id="login-email"
+                  type="email"
+                  placeholder="correo@ejemplo.com"
+                  className="pl-10"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="login-password">Contrasena</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                <Input
+                  id="login-password"
+                  type="password"
+                  placeholder="********"
+                  className="pl-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Cargando...' : 'Entrar'}
+            </Button>
+          </form>
+
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-[var(--color-surface)] px-3 text-xs text-[var(--color-text-muted)]">
+              o continua con
+            </span>
           </div>
 
-          <div>
-            <label htmlFor="login-password" className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-              <input
-                id="login-password"
-                type="password"
-                placeholder="••••••••"
-                className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#7AA7EC] hover:bg-[#6A96DB] text-white font-semibold py-3 rounded-lg transition-colors flex justify-center"
+          <Button
+            onClick={handleGoogleLogin}
+            variant="outline"
+            className="w-full border-white/20 bg-white text-slate-900 hover:bg-slate-100"
           >
-            {loading ? 'Cargando...' : 'Entrar'}
-          </button>
-        </form>
-
-        {/* Separador */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[#2E3648]"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-[#242B3D] text-[#94A3B8]">o continúa con</span>
-          </div>
-        </div>
-
-        {/* Botón de Google */}
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-3 border border-gray-300"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -135,23 +130,18 @@ export default function Login() {
               fill="#EA4335"
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
-          </svg>
-          Continuar con Google
-        </button>
+            </svg>
+            Continuar con Google
+          </Button>
 
-        {/* Link de Registro */}
-        <div className="mt-6 text-center">
-          <p className="text-[#94A3B8] text-sm">
-            ¿No tienes cuenta?{' '}
-            <Link
-              to="/register"
-              className="text-[#7AA7EC] hover:text-[#9BC7F0] font-medium hover:underline"
-            >
-              Regístrate aquí
+          <p className="text-center text-sm text-[var(--color-text-muted)]">
+            No tienes cuenta?{' '}
+            <Link to="/register" className="font-semibold text-[var(--color-primary)] hover:text-[var(--color-accent)]">
+              Registrate aqui
             </Link>
           </p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

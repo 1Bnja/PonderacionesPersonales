@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
-import { LazyMotion, m, domAnimation } from 'framer-motion'
+import { LazyMotion, m as Motion, domAnimation } from 'framer-motion'
 import AnimatedGridPattern from '../components/AnimatedGridPattern'
 
 export default function Landing() {
@@ -32,7 +32,7 @@ export default function Landing() {
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto text-center space-y-8">
 
-              <m.div
+              <Motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
@@ -40,18 +40,18 @@ export default function Landing() {
                 <h1 className="text-6xl lg:text-7xl font-extrabold leading-tight bg-gradient-to-r from-[#7AA7EC] to-[#9BC7F0] bg-clip-text text-transparent">
                   Tus notas,<br />bajo control.
                 </h1>
-              </m.div>
+              </Motion.div>
 
-              <m.p
+              <Motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="text-xl text-[#94A3B8] leading-relaxed max-w-2xl mx-auto"
               >
                 Gestiona tus ramos, calcula tus promedios y proyecta tu semestre académico en una plataforma simple y moderna.
-              </m.p>
+              </Motion.p>
 
-              <m.div
+              <Motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -69,7 +69,7 @@ export default function Landing() {
                 >
                   Ya tengo cuenta
                 </Link>
-              </m.div>
+              </Motion.div>
 
             </div>
           </div>

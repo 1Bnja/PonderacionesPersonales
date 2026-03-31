@@ -8,6 +8,9 @@ import Toast from '../components/Toast'
 import SuggestionModal from '../components/SuggestionModal'
 import ColorPicker, { getColorStyles } from '../components/ColorPicker'
 import UpcomingTasks from '../components/UpcomingTasks'
+import { Button } from '../components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar'
 
 export default function Dashboard() {
   const [ramos, setRamos] = useState([])
@@ -330,10 +333,28 @@ export default function Dashboard() {
       ...localSemesters
   ])].sort().reverse();
 
-  if (loading) return <div className="min-h-screen bg-[#1A1F2E] flex items-center justify-center"><div className="text-center text-[#E2E8F0] text-lg font-medium">Cargando...</div></div>
+  const totalRamos = ramos.length
+  const totalSemestres = todosLosSemestres.length
+  const promedioGeneral = totalRamos > 0
+    ? ramos.reduce((acc, ramo) => acc + (ramo.estadisticas?.promedioActual || 0), 0) / totalRamos
+    : 0
+  const ramosEnRiesgo = ramos.filter(ramo => {
+    const estado = ramo.estadisticas?.estado
+    return estado === 'CRÍTICO' || estado === 'REPROBADO' || estado === 'IMPOSIBLE'
+  }).length
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-8">
+        <Card className="w-full max-w-md">
+          <CardContent className="py-10 text-center text-[var(--color-text-muted)]">Cargando...</CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-[#1A1F2E] text-[#E2E8F0] p-4 md:p-8 relative">
+    <div className="relative min-h-screen p-4 text-[var(--color-text)] md:p-8">
 
       {/* TOAST NOTIFICATION */}
       {toast && (
@@ -377,184 +398,247 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-8 max-w-5xl mx-auto">
-        <div className="flex items-center gap-3">
-          <img src="/logo.svg" alt="Modo Azúl" className="w-10 h-10" />
-          <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7AA7EC] to-[#9BC7F0]">
-            Bienvenido a Modo Azúl, {username}!
-          </h1>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Botón de Sugerencias */}
-          <button
-            onClick={() => setShowSuggestionModal(true)}
-            className="p-2 hover:bg-[#242B3D] rounded-full transition group"
-            title="Enviar sugerencia"
-          >
-            <Lightbulb className="text-[#94A3B8] group-hover:text-[#7AA7EC] w-5 h-5 transition-colors" />
-          </button>
-
-          {/* Avatar */}
-          <button
-            onClick={() => navigate('/profile')}
-            className="relative group"
-            title="Editar perfil"
-          >
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#7AA7EC] bg-[#242B3D] flex items-center justify-center hover:border-[#9BC7F0] transition-colors">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <User className="w-5 h-5 text-[#94A3B8]" />
-              )}
+      <Card className="mx-auto mb-8 max-w-5xl">
+        <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/logo.svg" alt="Modo Azul" className="h-10 w-10" />
+            <div>
+              <CardTitle className="text-2xl md:text-3xl text-gradient-brand">Bienvenido, {username}</CardTitle>
+              <CardDescription>Organiza tus semestres y mantente al dia con tus evaluaciones.</CardDescription>
             </div>
-          </button>
+          </div>
 
-          <button
-            onClick={handleLogout}
-            className="p-2 hover:bg-[#242B3D] rounded-full transition"
-            title="Cerrar sesión"
-          >
-            <LogOut className="text-[#94A3B8] hover:text-[#E2E8F0] w-5 h-5 transition-colors" />
-          </button>
-        </div>
-      </div>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setShowSuggestionModal(true)}
+              variant="secondary"
+              size="icon"
+              title="Enviar sugerencia"
+            >
+              <Lightbulb className="h-5 w-5" />
+            </Button>
+
+            <Button
+              onClick={() => navigate('/profile')}
+              variant="secondary"
+              className="gap-2"
+              title="Editar perfil"
+            >
+              <Avatar className="h-8 w-8 border-[var(--color-primary)]">
+                <AvatarImage src={avatarUrl || undefined} alt="Avatar" />
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+              Perfil
+            </Button>
+
+            <Button onClick={handleLogout} variant="ghost" size="icon" title="Cerrar sesion">
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
 
       <div className="max-w-5xl mx-auto space-y-6">
 
-        {/* SECCIÓN EXPLICATIVA COLAPSABLE */}
-        <div className="bg-[#242B3D] border border-[#2E3648] rounded-2xl overflow-hidden shadow-lg">
-          <button
-            onClick={() => setShowExplanation(!showExplanation)}
-            className="w-full flex items-center justify-between p-4 hover:bg-[#2A3142] transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
-                <HelpCircle className="w-5 h-5 text-[#7AA7EC]" />
-              </div>
-              <div className="text-left">
-                <h2 className="text-lg font-bold text-[#E2E8F0]">¿Cómo funciona Modo Azúl?</h2>
-                <p className="text-xs text-[#94A3B8]">
-                  {showExplanation ? 'Haz clic para ocultar' : 'Haz clic para ver las características'}
-                </p>
-              </div>
-            </div>
-            <ChevronDown className={`w-5 h-5 text-[#94A3B8] transition-transform duration-300 ${showExplanation ? 'rotate-180' : ''}`} />
-          </button>
-
-          {showExplanation && (
-            <div className="px-4 pb-4 animate-in slide-in-from-top duration-300">
-              <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
-                <p className="text-[#94A3B8] text-sm mb-4 leading-relaxed">
-                  Tu calculadora inteligente de notas universitarias con importación automática, 
-                  gestión visual por semestres, calendario de evaluaciones y análisis predictivo de notas.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <ClipboardList className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Importación Inteligente</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Copia y pega directamente desde UTalmatico. Detección automática de ramos, evaluaciones y ponderaciones.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <BarChart3 className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Organización por Semestres</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Gestiona tus ramos con carpetas personalizables, colores y seguimiento de progreso en tiempo real.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <Calendar className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Calendario de Evaluaciones</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Visualiza todas tus evaluaciones en un calendario. Crea tareas personalizadas y recibe recordatorios.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <Target className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Calculadora Predictiva</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Calcula la nota mínima necesaria en evaluaciones pendientes. Simula escenarios y planifica tu éxito.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <Edit2 className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Edición en Tiempo Real</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Edita ramos, evaluaciones, fechas y ponderaciones con clic directo. Cambios instantáneos y sincronizados.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <UserCircle className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Personalización Total</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Temas de colores para semestres y ramos. Avatar personalizable y experiencia adaptada a ti.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Card className="bg-[var(--color-surface)]/80">
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)]">Semestres</p>
+              <p className="text-2xl font-bold mt-1">{totalSemestres}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-[var(--color-surface)]/80">
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)]">Ramos Activos</p>
+              <p className="text-2xl font-bold mt-1">{totalRamos}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-[var(--color-surface)]/80">
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)]">Promedio Global</p>
+              <p className="text-2xl font-bold mt-1">{promedioGeneral.toFixed(1)}</p>
+            </CardContent>
+          </Card>
         </div>
-        
-        {/* WIDGET DE PRÓXIMAS EVALUACIONES */}
-        <UpcomingTasks 
-          ramos={ramos} 
-          ramoColors={ramoColors}
-          onNavigateToCalendar={() => navigate('/calendar')}
-        />
 
-        {/* BOTÓN CREAR SEMESTRE */}
-        <div className="flex justify-end">
-            <button
-                onClick={openCreateModal}
-                className="flex items-center gap-2 bg-[#7AA7EC] hover:bg-[#6A96DB] text-white px-4 py-2 rounded-lg font-medium transition-all text-sm shadow-sm"
-            >
-                <FolderPlus className="w-4 h-4" /> Nuevo Semestre
-            </button>
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-2">
+            <Card className="bg-[var(--color-surface)]/80">
+              <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-[var(--color-text)]">Semestres</h2>
+                  <p className="text-xs text-[var(--color-text-muted)]">Tu espacio principal de trabajo diario.</p>
+                </div>
+
+                <Button
+                  onClick={openCreateModal}
+                  size="sm"
+                  className="gap-2 self-start sm:self-auto"
+                >
+                  <FolderPlus className="w-4 h-4" /> Nuevo Semestre
+                </Button>
+              </CardContent>
+            </Card>
+
+            {todosLosSemestres.length === 0 ? (
+              <div className="rounded-3xl border-2 border-dashed border-[#2E3648] bg-[#242B3D] py-20 text-center">
+                <Calculator className="mx-auto mb-4 h-16 w-16 text-[#94A3B8]" />
+                <h3 className="text-xl font-semibold text-[#E2E8F0]">Sin semestres</h3>
+                <p className="mb-4 mt-2 text-[#94A3B8]">Crea tu primer semestre para empezar.</p>
+                <Button onClick={openCreateModal}>+ Crear Semestre</Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {todosLosSemestres.map((semestre) => {
+                  const isOpen = expandedSemesters[semestre];
+                  const ramosDeEsteSemestre = ramosPorSemestre[semestre] || [];
+                  const count = ramosDeEsteSemestre.length;
+
+                  const promedioSemestre = count > 0
+                    ? ramosDeEsteSemestre.reduce((acc, r) => acc + r.estadisticas.promedioActual, 0) / count
+                    : 0;
+
+                  const semesterColor = getColorStyles(semesterColors[semestre] || 'Azul');
+
+                  return (
+                    <div key={semestre} className="overflow-hidden rounded-2xl border bg-[#242B3D] shadow-lg transition-all" style={{ borderColor: semesterColor.border }}>
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className="group flex cursor-pointer select-none items-center justify-between p-4 transition-colors hover:bg-[#2A3142]"
+                        onClick={() => toggleSemestre(semestre)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSemestre(semestre) }}
+                        style={{ backgroundColor: isOpen ? semesterColor.light : 'transparent' }}
+                      >
+                        <div className="flex flex-1 items-center gap-3">
+                          <div className="rounded-lg p-2 transition-colors" style={{ backgroundColor: isOpen ? semesterColor.bg : '#2E3648', color: isOpen ? 'white' : '#94A3B8' }}>
+                            {isOpen ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <div>
+                                <h2 className="text-lg font-bold text-[#E2E8F0] md:text-xl">{semestre}</h2>
+                                <p className="text-xs text-[#94A3B8]">
+                                  {count === 0 ? "Carpeta vacía" : `${count} ramos`}
+                                </p>
+                              </div>
+                              <div className="ml-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                                <button
+                                  onClick={(e) => startEditingSemester(semestre, e)}
+                                  className="rounded-lg p-1.5 text-[#94A3B8] transition-colors hover:bg-[#2E3648] hover:text-[#7AA7EC]"
+                                  title="Editar semestre"
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => deleteSemester(semestre, e)}
+                                  className="rounded-lg p-1.5 text-[#94A3B8] transition-colors hover:bg-[#2E3648] hover:text-red-400"
+                                  title="Eliminar semestre"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          {count > 0 && (
+                            <div className="hidden text-right md:block">
+                              <span className="block text-[10px] font-bold uppercase text-[#94A3B8]">Promedio</span>
+                              <span className={`font-bold ${promedioSemestre >= 4.0 ? 'text-green-400' : 'text-red-400'}`}>
+                                {promedioSemestre.toFixed(1)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {isOpen && (
+                        <div className="animate-in slide-in-from-top-2 border-t border-[#2E3648] bg-[#1A1F2E] p-6 fade-in">
+                          {count > 0 ? (
+                            <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                              {ramosDeEsteSemestre.map((ramo) => (
+                                <RamoCard
+                                  key={ramo.id}
+                                  ramo={ramo}
+                                  onDelete={() => deleteRamo(ramo.id)}
+                                  ramoColor={ramoColors[ramo.id] || semesterColors[semestre] || 'Azul'}
+                                  onColorChange={(newColor) => {
+                                    const newColors = { ...ramoColors, [ramo.id]: newColor };
+                                    setRamoColors(newColors);
+                                    saveNotasToCloud(ramos, null, newColors);
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="mb-6 rounded-xl border-2 border-dashed border-[#2E3648] bg-[#242B3D] py-8 text-center text-sm italic text-[#94A3B8]">
+                              Esta carpeta está vacía. Importa tus ramos.
+                            </div>
+                          )}
+
+                          <div className="flex gap-3">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openImportModal(semestre);
+                              }}
+                              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#2E3648] bg-[#242B3D] p-3 text-sm font-medium text-[#E2E8F0] transition-all hover:border-[#7AA7EC] hover:bg-[#7AA7EC] hover:text-white"
+                            >
+                              <FileText className="h-4 w-4" />
+                              Importar desde UTalmatico
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addManualRamo(semestre);
+                              }}
+                              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#7AA7EC] bg-[#242B3D] p-3 text-sm font-medium text-[#7AA7EC] transition-all hover:bg-[#7AA7EC] hover:text-white"
+                            >
+                              <Plus className="h-4 w-4" />
+                              Crear Ramo Manual
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4 lg:sticky lg:top-6">
+            <UpcomingTasks
+              ramos={ramos}
+              ramoColors={ramoColors}
+              onNavigateToCalendar={() => navigate('/calendar')}
+            />
+
+            <Card className="h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <HelpCircle className="h-4 w-4 text-[var(--color-primary)]" />
+                  Guía rápida
+                </CardTitle>
+                <CardDescription>Menos ruido visual y más foco en lo que haces cada día.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-[var(--color-text-muted)]">
+                <p>1. Crea tu semestre</p>
+                <p>2. Importa desde UTalmatico o crea ramo manual</p>
+                <p>3. Revisa próximas evaluaciones en calendario</p>
+                {ramosEnRiesgo > 0 && (
+                  <p className="text-amber-300">Tienes {ramosEnRiesgo} ramo(s) en estado crítico.</p>
+                )}
+                <Button variant="secondary" size="sm" className="w-full" onClick={() => setShowExplanation(true)}>
+                  Ver guía completa
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* ------------------------------------------- */}
@@ -733,142 +817,60 @@ export default function Dashboard() {
             </div>
         )}
 
+        {showExplanation && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-3xl rounded-2xl border border-[#2E3648] bg-[#242B3D] shadow-2xl">
+              <div className="flex items-center justify-between border-b border-[#2E3648] p-4 md:p-5">
+                <div>
+                  <h3 className="text-lg font-bold text-[#E2E8F0]">¿Cómo funciona Modo Azul?</h3>
+                  <p className="text-sm text-[#94A3B8]">Resumen de funcionalidades principales.</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setShowExplanation(false)}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
 
-        {/* LISTA DE SEMESTRES */}
-        {todosLosSemestres.length === 0 ? (
-            <div className="text-center py-20 bg-[#242B3D] rounded-3xl border-2 border-dashed border-[#2E3648]">
-                <Calculator className="w-16 h-16 mx-auto text-[#94A3B8] mb-4" />
-                <h3 className="text-xl font-semibold text-[#E2E8F0]">Sin semestres</h3>
-                <p className="text-[#94A3B8] mt-2 mb-4">Crea tu primer semestre para empezar.</p>
-                <button onClick={openCreateModal} className="bg-[#7AA7EC] hover:bg-[#6A96DB] text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors">
-                    + Crear Semestre
-                </button>
+              <div className="max-h-[70vh] overflow-y-auto p-4 md:p-5">
+                <p className="mb-4 text-sm leading-relaxed text-[#94A3B8]">
+                  Tu calculadora inteligente de notas universitarias con importación automática, gestión visual por semestres,
+                  calendario de evaluaciones y análisis predictivo para planificar mejor cada ramo.
+                </p>
+
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <GuideItem
+                    icon={<ClipboardList className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Importación Inteligente"
+                    description="Copia y pega desde UTalmatico para detectar ramos, evaluaciones y ponderaciones automáticamente."
+                  />
+                  <GuideItem
+                    icon={<BarChart3 className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Organización por Semestres"
+                    description="Crea carpetas por semestre, personaliza colores y sigue tu progreso en tiempo real."
+                  />
+                  <GuideItem
+                    icon={<Calendar className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Calendario de Evaluaciones"
+                    description="Visualiza próximas pruebas, tareas personalizadas y fechas atrasadas en un solo lugar."
+                  />
+                  <GuideItem
+                    icon={<Target className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Calculadora Predictiva"
+                    description="Estima la nota necesaria en evaluaciones pendientes para cumplir tus metas."
+                  />
+                  <GuideItem
+                    icon={<Edit2 className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Edición Rápida"
+                    description="Edita ramos, unidades, notas y fechas en tiempo real sin salir del flujo."
+                  />
+                  <GuideItem
+                    icon={<UserCircle className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Personalización"
+                    description="Ajusta colores, semestres y avatar para una experiencia adaptada a ti."
+                  />
+                </div>
+              </div>
             </div>
-        ) : (
-            <div className="space-y-4">
-                {todosLosSemestres.map((semestre) => {
-                    const isOpen = expandedSemesters[semestre];
-                    const ramosDeEsteSemestre = ramosPorSemestre[semestre] || [];
-                    const count = ramosDeEsteSemestre.length;
-                    
-                    const promedioSemestre = count > 0
-                        ? ramosDeEsteSemestre.reduce((acc, r) => acc + r.estadisticas.promedioActual, 0) / count
-                        : 0;
-
-                    const semesterColor = getColorStyles(semesterColors[semestre] || 'Azul');
-
-                    return (
-                        <div key={semestre} className="bg-[#242B3D] rounded-2xl border overflow-hidden transition-all shadow-lg" style={{ borderColor: semesterColor.border }}>
-
-                            {/* CABECERA DEL SEMESTRE */}
-                            <div
-                                role="button"
-                                tabIndex={0}
-                                className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#2A3142] transition-colors select-none group"
-                                onClick={() => toggleSemestre(semestre)}
-                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSemestre(semestre) }}
-                                style={{ backgroundColor: isOpen ? semesterColor.light : 'transparent' }}
-                            >
-                                <div className="flex items-center gap-3 flex-1">
-                                    <div className={`p-2 rounded-lg transition-colors`} style={{ backgroundColor: isOpen ? semesterColor.bg : '#2E3648', color: isOpen ? 'white' : '#94A3B8' }}>
-                                        {isOpen ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <div>
-                                                <h2 className="text-lg md:text-xl font-bold text-[#E2E8F0]">{semestre}</h2>
-                                                <p className="text-xs text-[#94A3B8]">
-                                                    {count === 0 ? "Carpeta vacía" : `${count} ramos`}
-                                                </p>
-                                            </div>
-                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                                                <button
-                                                    onClick={(e) => startEditingSemester(semestre, e)}
-                                                    className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-[#7AA7EC]"
-                                                    title="Editar semestre"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => deleteSemester(semestre, e)}
-                                                    className="p-1.5 hover:bg-[#2E3648] rounded-lg transition-colors text-[#94A3B8] hover:text-red-400"
-                                                    title="Eliminar semestre"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex items-center gap-3">
-                                    {count > 0 && (
-                                        <div className="text-right hidden md:block">
-                                            <span className="block text-[10px] text-[#94A3B8] uppercase font-bold">Promedio</span>
-                                            <span className={`font-bold ${promedioSemestre >= 4.0 ? 'text-green-400' : 'text-red-400'}`}>
-                                                {promedioSemestre.toFixed(1)}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* CONTENIDO DESPLEGABLE */}
-                            {isOpen && (
-                                <div className="p-6 border-t border-[#2E3648] bg-[#1A1F2E] animate-in fade-in slide-in-from-top-2">
-
-                                    {/* GRID DE RAMOS */}
-                                    {count > 0 ? (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                                            {ramosDeEsteSemestre.map((ramo) => (
-                                                <RamoCard
-                                                    key={ramo.id}
-                                                    ramo={ramo}
-                                                    onDelete={() => deleteRamo(ramo.id)}
-                                                    ramoColor={ramoColors[ramo.id] || semesterColors[semestre] || 'Azul'}
-                                                    onColorChange={(newColor) => {
-                                                        const newColors = { ...ramoColors, [ramo.id]: newColor };
-                                                        setRamoColors(newColors);
-                                                        saveNotasToCloud(ramos, null, newColors);
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="text-center py-8 text-[#94A3B8] text-sm italic border-2 border-dashed border-[#2E3648] rounded-xl mb-6 bg-[#242B3D]">
-                                            Esta carpeta está vacía. Importa tus ramos.
-                                        </div>
-                                    )}
-
-                                    {/* BOTONES DE ACCIÓN */}
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                openImportModal(semestre);
-                                            }}
-                                            className="flex-1 border border-[#2E3648] bg-[#242B3D] hover:bg-[#7AA7EC] hover:border-[#7AA7EC] hover:text-white text-[#E2E8F0] rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm"
-                                        >
-                                            <FileText className="w-4 h-4" />
-                                            Importar desde UTalmatico
-                                        </button>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                addManualRamo(semestre);
-                                            }}
-                                            className="flex-1 border border-[#7AA7EC] bg-[#242B3D] hover:bg-[#7AA7EC] hover:text-white text-[#7AA7EC] rounded-xl p-3 flex items-center justify-center gap-2 transition-all font-medium text-sm"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                            Crear Ramo Manual
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )
-                })}
-            </div>
+          </div>
         )}
       </div>
 
@@ -877,6 +879,18 @@ export default function Dashboard() {
         isOpen={showSuggestionModal}
         onClose={() => setShowSuggestionModal(false)}
       />
+    </div>
+  )
+}
+
+function GuideItem({ icon, title, description }) {
+  return (
+    <div className="rounded-xl border border-[#2E3648] bg-[#1A1F2E] p-3">
+      <div className="mb-1.5 flex items-center gap-2">
+        <div className="rounded-lg bg-[#7AA7EC]/10 p-1.5">{icon}</div>
+        <h4 className="text-sm font-bold text-[#E2E8F0]">{title}</h4>
+      </div>
+      <p className="text-xs leading-relaxed text-[#94A3B8]">{description}</p>
     </div>
   )
 }

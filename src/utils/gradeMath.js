@@ -10,12 +10,11 @@ export function calcularEstadisticasRamo(ramo, notaAprobacion = 4.0) {
       let acumuladoUnidad = 0;
       let pesoUnidadEvaluado = 0;
 
-      const evaluacionesProcesadas = unidad.evaluaciones.map(ev => {
+      unidad.evaluaciones.forEach(ev => {
           if (ev.nota !== null && ev.nota > 0) {
               acumuladoUnidad += ev.nota * (ev.peso / 100);
               pesoUnidadEvaluado += ev.peso;
           }
-          return ev;
       });
 
       // Promedio ponderado de la unidad (suma directa de los aportes)
