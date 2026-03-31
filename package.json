@@ -48,6 +48,7 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.55.1",
-    "@swc/core-linux-x64-gnu": "1.15.8"
+    "@swc/core-linux-x64-gnu": "1.15.8",
+    "lightningcss-linux-x64-gnu": "1.30.2"
   }
 }
