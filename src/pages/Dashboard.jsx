@@ -333,6 +333,16 @@ export default function Dashboard() {
       ...localSemesters
   ])].sort().reverse();
 
+  const totalRamos = ramos.length
+  const totalSemestres = todosLosSemestres.length
+  const promedioGeneral = totalRamos > 0
+    ? ramos.reduce((acc, ramo) => acc + (ramo.estadisticas?.promedioActual || 0), 0) / totalRamos
+    : 0
+  const ramosEnRiesgo = ramos.filter(ramo => {
+    const estado = ramo.estadisticas?.estado
+    return estado === 'CRÍTICO' || estado === 'REPROBADO' || estado === 'IMPOSIBLE'
+  }).length
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center p-8">
@@ -432,130 +442,57 @@ export default function Dashboard() {
 
       <div className="max-w-5xl mx-auto space-y-6">
 
-        {/* SECCIÓN EXPLICATIVA COLAPSABLE */}
-        <div className="bg-[#242B3D] border border-[#2E3648] rounded-2xl overflow-hidden shadow-lg">
-          <button
-            onClick={() => setShowExplanation(!showExplanation)}
-            className="w-full flex items-center justify-between p-4 hover:bg-[#2A3142] transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#7AA7EC]/10 rounded-lg">
-                <HelpCircle className="w-5 h-5 text-[#7AA7EC]" />
-              </div>
-              <div className="text-left">
-                <h2 className="text-lg font-bold text-[#E2E8F0]">¿Cómo funciona Modo Azúl?</h2>
-                <p className="text-xs text-[#94A3B8]">
-                  {showExplanation ? 'Haz clic para ocultar' : 'Haz clic para ver las características'}
-                </p>
-              </div>
-            </div>
-            <ChevronDown className={`w-5 h-5 text-[#94A3B8] transition-transform duration-300 ${showExplanation ? 'rotate-180' : ''}`} />
-          </button>
-
-          {showExplanation && (
-            <div className="px-4 pb-4 animate-in slide-in-from-top duration-300">
-              <div className="bg-[#1A1F2E] rounded-xl p-4 border border-[#2E3648]">
-                <p className="text-[#94A3B8] text-sm mb-4 leading-relaxed">
-                  Tu calculadora inteligente de notas universitarias con importación automática, 
-                  gestión visual por semestres, calendario de evaluaciones y análisis predictivo de notas.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <ClipboardList className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Importación Inteligente</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Copia y pega directamente desde UTalmatico. Detección automática de ramos, evaluaciones y ponderaciones.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <BarChart3 className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Organización por Semestres</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Gestiona tus ramos con carpetas personalizables, colores y seguimiento de progreso en tiempo real.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <Calendar className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Calendario de Evaluaciones</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Visualiza todas tus evaluaciones en un calendario. Crea tareas personalizadas y recibe recordatorios.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <Target className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Calculadora Predictiva</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Calcula la nota mínima necesaria en evaluaciones pendientes. Simula escenarios y planifica tu éxito.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <Edit2 className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Edición en Tiempo Real</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Edita ramos, evaluaciones, fechas y ponderaciones con clic directo. Cambios instantáneos y sincronizados.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#242B3D] rounded-lg p-3 border border-[#2E3648]">
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <div className="p-1.5 bg-[#7AA7EC]/10 rounded-lg shrink-0">
-                        <UserCircle className="w-4 h-4 text-[#7AA7EC]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#E2E8F0] text-sm">Personalización Total</h3>
-                        <p className="text-xs text-[#94A3B8] leading-relaxed">
-                          Temas de colores para semestres y ramos. Avatar personalizable y experiencia adaptada a ti.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Card className="bg-[var(--color-surface)]/80">
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)]">Semestres</p>
+              <p className="text-2xl font-bold mt-1">{totalSemestres}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-[var(--color-surface)]/80">
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)]">Ramos Activos</p>
+              <p className="text-2xl font-bold mt-1">{totalRamos}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-[var(--color-surface)]/80">
+            <CardContent className="p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)]">Promedio Global</p>
+              <p className="text-2xl font-bold mt-1">{promedioGeneral.toFixed(1)}</p>
+            </CardContent>
+          </Card>
         </div>
-        
-        {/* WIDGET DE PRÓXIMAS EVALUACIONES */}
-        <UpcomingTasks 
-          ramos={ramos} 
-          ramoColors={ramoColors}
-          onNavigateToCalendar={() => navigate('/calendar')}
-        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <UpcomingTasks
+              ramos={ramos}
+              ramoColors={ramoColors}
+              onNavigateToCalendar={() => navigate('/calendar')}
+            />
+          </div>
+
+          <Card className="h-full">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-[var(--color-primary)]" />
+                Guía rápida
+              </CardTitle>
+              <CardDescription>Menos ruido visual, más foco en lo importante.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-[var(--color-text-muted)]">
+              <p>1. Crea tu semestre</p>
+              <p>2. Importa desde UTalmatico o crea ramo manual</p>
+              <p>3. Revisa próximas evaluaciones en calendario</p>
+              {ramosEnRiesgo > 0 && (
+                <p className="text-amber-300">Tienes {ramosEnRiesgo} ramo(s) en estado crítico.</p>
+              )}
+              <Button variant="secondary" size="sm" className="w-full" onClick={() => setShowExplanation(true)}>
+                Ver guía completa
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* BOTÓN CREAR SEMESTRE */}
         <div className="flex justify-end">
@@ -744,6 +681,62 @@ export default function Dashboard() {
             </div>
         )}
 
+        {showExplanation && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-3xl rounded-2xl border border-[#2E3648] bg-[#242B3D] shadow-2xl">
+              <div className="flex items-center justify-between border-b border-[#2E3648] p-4 md:p-5">
+                <div>
+                  <h3 className="text-lg font-bold text-[#E2E8F0]">¿Cómo funciona Modo Azul?</h3>
+                  <p className="text-sm text-[#94A3B8]">Resumen de funcionalidades principales.</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setShowExplanation(false)}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              <div className="max-h-[70vh] overflow-y-auto p-4 md:p-5">
+                <p className="mb-4 text-sm leading-relaxed text-[#94A3B8]">
+                  Tu calculadora inteligente de notas universitarias con importación automática, gestión visual por semestres,
+                  calendario de evaluaciones y análisis predictivo para planificar mejor cada ramo.
+                </p>
+
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <GuideItem
+                    icon={<ClipboardList className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Importación Inteligente"
+                    description="Copia y pega desde UTalmatico para detectar ramos, evaluaciones y ponderaciones automáticamente."
+                  />
+                  <GuideItem
+                    icon={<BarChart3 className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Organización por Semestres"
+                    description="Crea carpetas por semestre, personaliza colores y sigue tu progreso en tiempo real."
+                  />
+                  <GuideItem
+                    icon={<Calendar className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Calendario de Evaluaciones"
+                    description="Visualiza próximas pruebas, tareas personalizadas y fechas atrasadas en un solo lugar."
+                  />
+                  <GuideItem
+                    icon={<Target className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Calculadora Predictiva"
+                    description="Estima la nota necesaria en evaluaciones pendientes para cumplir tus metas."
+                  />
+                  <GuideItem
+                    icon={<Edit2 className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Edición Rápida"
+                    description="Edita ramos, unidades, notas y fechas en tiempo real sin salir del flujo."
+                  />
+                  <GuideItem
+                    icon={<UserCircle className="h-4 w-4 text-[#7AA7EC]" />}
+                    title="Personalización"
+                    description="Ajusta colores, semestres y avatar para una experiencia adaptada a ti."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
 
         {/* LISTA DE SEMESTRES */}
         {todosLosSemestres.length === 0 ? (
@@ -888,6 +881,18 @@ export default function Dashboard() {
         isOpen={showSuggestionModal}
         onClose={() => setShowSuggestionModal(false)}
       />
+    </div>
+  )
+}
+
+function GuideItem({ icon, title, description }) {
+  return (
+    <div className="rounded-xl border border-[#2E3648] bg-[#1A1F2E] p-3">
+      <div className="mb-1.5 flex items-center gap-2">
+        <div className="rounded-lg bg-[#7AA7EC]/10 p-1.5">{icon}</div>
+        <h4 className="text-sm font-bold text-[#E2E8F0]">{title}</h4>
+      </div>
+      <p className="text-xs leading-relaxed text-[#94A3B8]">{description}</p>
     </div>
   )
 }
