@@ -8,6 +8,9 @@ import Toast from '../components/Toast'
 import SuggestionModal from '../components/SuggestionModal'
 import ColorPicker, { getColorStyles } from '../components/ColorPicker'
 import UpcomingTasks from '../components/UpcomingTasks'
+import { Button } from '../components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar'
 
 export default function Dashboard() {
   const [ramos, setRamos] = useState([])
@@ -330,10 +333,18 @@ export default function Dashboard() {
       ...localSemesters
   ])].sort().reverse();
 
-  if (loading) return <div className="min-h-screen bg-[#1A1F2E] flex items-center justify-center"><div className="text-center text-[#E2E8F0] text-lg font-medium">Cargando...</div></div>
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-8">
+        <Card className="w-full max-w-md">
+          <CardContent className="py-10 text-center text-[var(--color-text-muted)]">Cargando...</CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-[#1A1F2E] text-[#E2E8F0] p-4 md:p-8 relative">
+    <div className="relative min-h-screen p-4 text-[var(--color-text)] md:p-8">
 
       {/* TOAST NOTIFICATION */}
       {toast && (
@@ -377,48 +388,47 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-8 max-w-5xl mx-auto">
-        <div className="flex items-center gap-3">
-          <img src="/logo.svg" alt="Modo Azúl" className="w-10 h-10" />
-          <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7AA7EC] to-[#9BC7F0]">
-            Bienvenido a Modo Azúl, {username}!
-          </h1>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Botón de Sugerencias */}
-          <button
-            onClick={() => setShowSuggestionModal(true)}
-            className="p-2 hover:bg-[#242B3D] rounded-full transition group"
-            title="Enviar sugerencia"
-          >
-            <Lightbulb className="text-[#94A3B8] group-hover:text-[#7AA7EC] w-5 h-5 transition-colors" />
-          </button>
-
-          {/* Avatar */}
-          <button
-            onClick={() => navigate('/profile')}
-            className="relative group"
-            title="Editar perfil"
-          >
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#7AA7EC] bg-[#242B3D] flex items-center justify-center hover:border-[#9BC7F0] transition-colors">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <User className="w-5 h-5 text-[#94A3B8]" />
-              )}
+      <Card className="mx-auto mb-8 max-w-5xl">
+        <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/logo.svg" alt="Modo Azul" className="h-10 w-10" />
+            <div>
+              <CardTitle className="text-2xl md:text-3xl text-gradient-brand">Bienvenido, {username}</CardTitle>
+              <CardDescription>Organiza tus semestres y mantente al dia con tus evaluaciones.</CardDescription>
             </div>
-          </button>
+          </div>
 
-          <button
-            onClick={handleLogout}
-            className="p-2 hover:bg-[#242B3D] rounded-full transition"
-            title="Cerrar sesión"
-          >
-            <LogOut className="text-[#94A3B8] hover:text-[#E2E8F0] w-5 h-5 transition-colors" />
-          </button>
-        </div>
-      </div>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setShowSuggestionModal(true)}
+              variant="secondary"
+              size="icon"
+              title="Enviar sugerencia"
+            >
+              <Lightbulb className="h-5 w-5" />
+            </Button>
+
+            <Button
+              onClick={() => navigate('/profile')}
+              variant="secondary"
+              className="gap-2"
+              title="Editar perfil"
+            >
+              <Avatar className="h-8 w-8 border-[var(--color-primary)]">
+                <AvatarImage src={avatarUrl || undefined} alt="Avatar" />
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+              Perfil
+            </Button>
+
+            <Button onClick={handleLogout} variant="ghost" size="icon" title="Cerrar sesion">
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
 
       <div className="max-w-5xl mx-auto space-y-6">
 
@@ -549,12 +559,13 @@ export default function Dashboard() {
 
         {/* BOTÓN CREAR SEMESTRE */}
         <div className="flex justify-end">
-            <button
+          <Button
                 onClick={openCreateModal}
-                className="flex items-center gap-2 bg-[#7AA7EC] hover:bg-[#6A96DB] text-white px-4 py-2 rounded-lg font-medium transition-all text-sm shadow-sm"
+            size="sm"
+            className="gap-2"
             >
                 <FolderPlus className="w-4 h-4" /> Nuevo Semestre
-            </button>
+          </Button>
         </div>
 
         {/* ------------------------------------------- */}
@@ -740,9 +751,9 @@ export default function Dashboard() {
                 <Calculator className="w-16 h-16 mx-auto text-[#94A3B8] mb-4" />
                 <h3 className="text-xl font-semibold text-[#E2E8F0]">Sin semestres</h3>
                 <p className="text-[#94A3B8] mt-2 mb-4">Crea tu primer semestre para empezar.</p>
-                <button onClick={openCreateModal} className="bg-[#7AA7EC] hover:bg-[#6A96DB] text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors">
+            <Button onClick={openCreateModal}>
                     + Crear Semestre
-                </button>
+            </Button>
             </div>
         ) : (
             <div className="space-y-4">

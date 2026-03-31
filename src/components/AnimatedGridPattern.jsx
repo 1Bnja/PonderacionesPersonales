@@ -1,4 +1,4 @@
-import { LazyMotion, m, domAnimation } from 'framer-motion'
+import { LazyMotion, m as Motion, domAnimation } from 'framer-motion'
 import { useEffect, useState, useMemo } from 'react'
 
 export default function AnimatedGridPattern() {
@@ -85,7 +85,7 @@ export default function AnimatedGridPattern() {
         {/* Cuadros animados que se iluminan */}
         <div className="absolute inset-0" style={{ transform: 'translate3d(0,0,0)' }}>
           {squares.map((square) => (
-            <m.div
+            <Motion.div
               key={square.id}
               className="absolute w-10 h-10 border border-[#7AA7EC] bg-[#7AA7EC]/20"
               style={{

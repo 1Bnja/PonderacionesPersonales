@@ -4,6 +4,11 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Lock, Mail, User, ArrowLeft, GraduationCap } from 'lucide-react'
 import Toast from '../components/Toast'
 import AnimatedGridPattern from '../components/AnimatedGridPattern'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Label } from '../components/ui/label'
+import { Separator } from '../components/ui/separator'
 
 // Lista de instituciones de educación superior de Chile
 const universidadesChile = [
@@ -100,7 +105,7 @@ export default function Register() {
 
     setLoading(true)
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -147,34 +152,33 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1A1F2E] p-4 py-8 relative overflow-hidden">
-      {/* Animated Grid Background */}
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4 py-8">
       <AnimatedGridPattern />
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="bg-[#242B3D] p-8 rounded-2xl shadow-xl w-full max-w-3xl border border-[#2E3648] relative z-10">
+      <Card className="relative z-10 w-full max-w-3xl">
+        <CardHeader className="space-y-4">
+          <Link
+            to="/login"
+            className="inline-flex w-fit items-center gap-2 text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+          >
+            <ArrowLeft className="h-4 w-4" /> Volver al inicio
+          </Link>
 
-        {/* Botón Volver */}
-        <Link
-          to="/login"
-          className="flex items-center gap-2 text-[#94A3B8] hover:text-[#E2E8F0] mb-6 transition-colors text-sm"
-        >
-          <ArrowLeft className="w-4 h-4" /> Volver al inicio
-        </Link>
+          <div className="text-center">
+            <CardTitle className="text-2xl">Crear cuenta</CardTitle>
+            <CardDescription>Unete a Modo Azul y organiza tus notas.</CardDescription>
+          </div>
+        </CardHeader>
 
-        {/* Título */}
-        <div className="text-center mb-5">
-          <h1 className="text-2xl font-bold text-[#E2E8F0]">Crear Cuenta</h1>
-          <p className="text-[#94A3B8] text-sm mt-2">Únete a Modo Azúl</p>
-        </div>
-
-        {/* Botón de Google */}
-        <button
-          onClick={handleGoogleSignup}
-          className="w-full bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-3 border border-gray-300 mb-5"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+        <CardContent className="space-y-5">
+          <Button
+            onClick={handleGoogleSignup}
+            variant="outline"
+            className="w-full border-white/20 bg-white text-slate-900 hover:bg-slate-100"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -191,173 +195,157 @@ export default function Register() {
               fill="#EA4335"
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
-          </svg>
-          Continuar con Google
-        </button>
+            </svg>
+            Continuar con Google
+          </Button>
 
-        {/* Separador */}
-        <div className="relative my-5">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[#2E3648]"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-[#242B3D] text-[#94A3B8]">o regístrate con email</span>
-          </div>
-        </div>
-
-        {/* Formulario */}
-        <form onSubmit={handleRegister} className="space-y-4">
-          {/* Nombre, Apellido y Usuario */}
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label htmlFor="reg-nombre" className="block text-sm font-medium text-[#E2E8F0] mb-1">Nombre</label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                <input
-                  id="reg-nombre"
-                  type="text"
-                  placeholder="Tu nombre"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="reg-apellido" className="block text-sm font-medium text-[#E2E8F0] mb-1">Apellido</label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                <input
-                  id="reg-apellido"
-                  type="text"
-                  placeholder="Tu apellido"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                  value={apellido}
-                  onChange={(e) => setApellido(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="reg-username" className="block text-sm font-medium text-[#E2E8F0] mb-1">Usuario</label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                <input
-                  id="reg-username"
-                  type="text"
-                  placeholder="usuario123"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  minLength={3}
-                />
-              </div>
-            </div>
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-[var(--color-surface)] px-3 text-xs text-[var(--color-text-muted)]">
+              o registrate con email
+            </span>
           </div>
 
-          {/* Universidad y Correo */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="reg-universidad" className="block text-sm font-medium text-[#E2E8F0] mb-1">Universidad</label>
-              <div className="relative">
-                <GraduationCap className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5 pointer-events-none z-10" />
-                <select
-                  id="reg-universidad"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none appearance-none cursor-pointer"
-                  value={universidad}
-                  onChange={(e) => setUniversidad(e.target.value)}
-                  required
-                >
-                  <option value="" className="bg-[#1A1F2E]">Selecciona tu universidad</option>
-                  {universidadesChile.map((uni) => (
-                    <option key={uni} value={uni} className="bg-[#1A1F2E]">
-                      {uni}
-                    </option>
-                  ))}
-                </select>
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="reg-nombre">Nombre</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
+                    id="reg-nombre"
+                    type="text"
+                    placeholder="Tu nombre"
+                    className="pl-10"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reg-apellido">Apellido</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
+                    id="reg-apellido"
+                    type="text"
+                    placeholder="Tu apellido"
+                    className="pl-10"
+                    value={apellido}
+                    onChange={(e) => setApellido(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reg-username">Usuario</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
+                    id="reg-username"
+                    type="text"
+                    placeholder="usuario123"
+                    className="pl-10"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    minLength={3}
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label htmlFor="reg-email" className="block text-sm font-medium text-[#E2E8F0] mb-1">Correo electrónico</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                <input
-                  id="reg-email"
-                  type="email"
-                  placeholder="correo@ejemplo.com"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="reg-universidad">Universidad</Label>
+                <div className="relative">
+                  <GraduationCap className="pointer-events-none absolute left-3 top-2.5 z-10 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <select
+                    id="reg-universidad"
+                    className="flex h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]/70 pl-10 pr-3 text-sm text-[var(--color-text)] outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/60"
+                    value={universidad}
+                    onChange={(e) => setUniversidad(e.target.value)}
+                    required
+                  >
+                    <option value="">Selecciona tu universidad</option>
+                    {universidadesChile.map((uni) => (
+                      <option key={uni} value={uni}>
+                        {uni}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reg-email">Correo electronico</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
+                    id="reg-email"
+                    type="email"
+                    placeholder="correo@ejemplo.com"
+                    className="pl-10"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Contraseñas */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="reg-password" className="block text-sm font-medium text-[#E2E8F0] mb-1">Contraseña</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                <input
-                  id="reg-password"
-                  type="password"
-                  placeholder="Mínimo 6 caracteres"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="reg-password">Contrasena</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
+                    id="reg-password"
+                    type="password"
+                    placeholder="Minimo 6 caracteres"
+                    className="pl-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reg-confirm-password">Confirmar contrasena</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-2.5 h-5 w-5 text-[var(--color-text-muted)]" />
+                  <Input
+                    id="reg-confirm-password"
+                    type="password"
+                    placeholder="Repite tu contrasena"
+                    className="pl-10"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    minLength={6}
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label htmlFor="reg-confirm-password" className="block text-sm font-medium text-[#E2E8F0] mb-1">Confirmar contraseña</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 text-[#94A3B8] w-5 h-5" />
-                <input
-                  id="reg-confirm-password"
-                  type="password"
-                  placeholder="Repite tu contraseña"
-                  className="w-full bg-[#1A1F2E] border border-[#2E3648] rounded-lg py-2.5 pl-10 pr-4 text-[#E2E8F0] placeholder-[#94A3B8]/50 focus:ring-2 focus:ring-[#7AA7EC] focus:border-[#7AA7EC] focus:outline-none"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
-              </div>
-            </div>
-          </div>
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Creando cuenta...' : 'Registrarse'}
+            </Button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#7AA7EC] hover:bg-[#6A96DB] text-white font-semibold py-3 rounded-lg transition-colors flex justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Creando cuenta...' : 'Registrarse'}
-          </button>
-        </form>
-
-        {/* Link a Login */}
-        <div className="mt-6 text-center">
-          <p className="text-[#94A3B8] text-sm">
-            ¿Ya tienes cuenta?{' '}
-            <Link
-              to="/login"
-              className="text-[#7AA7EC] hover:text-[#9BC7F0] font-medium hover:underline"
-            >
-              Inicia sesión aquí
+          <p className="text-center text-sm text-[var(--color-text-muted)]">
+            Ya tienes cuenta?{' '}
+            <Link to="/login" className="font-semibold text-[var(--color-primary)] hover:text-[var(--color-accent)]">
+              Inicia sesion aqui
             </Link>
           </p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

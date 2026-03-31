@@ -6,6 +6,9 @@ import Toast from '../components/Toast'
 import { calcularEstadisticasRamo } from '../utils/gradeMath'
 import { format, parseISO, isValid } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { Button } from '../components/ui/button'
+import { Card, CardContent, CardHeader } from '../components/ui/card'
+import { Badge } from '../components/ui/badge'
 
 export default function RamoDetail() {
   const { id } = useParams()
@@ -18,10 +21,6 @@ export default function RamoDetail() {
   const [editingUnidad, setEditingUnidad] = useState(null) // { unidadIdx, field }
   const [editingRamo, setEditingRamo] = useState(null) // 'nombre'
   const [editValue, setEditValue] = useState('')
-
-  useEffect(() => {
-    fetchRamo()
-  }, [])
 
   const fetchRamo = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -44,6 +43,11 @@ export default function RamoDetail() {
     }
     setLoading(false)
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchRamo()
+  }, [])
 
   // ============================================
   // FUNCIONES DE GUARDADO EN LA NUBE
@@ -92,7 +96,7 @@ export default function RamoDetail() {
     if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return fechaStr
     
     // Si está en formato DD/MM/YYYY o DD-MM-YYYY
-    const partes = fechaStr.split(/[\/\-]/)
+    const partes = fechaStr.split(/[/-]/)
     if (partes.length === 3) {
       const [dia, mes, anio] = partes
       // Asegurar que el año tenga 4 dígitos
@@ -288,7 +292,17 @@ export default function RamoDetail() {
     cancelEditingRamo()
   }
 
-  if (loading) return <div className="p-10 text-center text-white">Cargando detalles...</div>
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-10">
+        <Card className="w-full max-w-md">
+          <CardContent className="py-10 text-center text-[var(--color-text-muted)]">
+            Cargando detalles...
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
   if (!ramo) return null
 
   const { estadisticas, unidades } = ramo
@@ -296,22 +310,22 @@ export default function RamoDetail() {
   const esAzul = promedio >= 4.0
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-4 md:p-8">
+    <div className="min-h-screen p-4 text-[var(--color-text)] md:p-8">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       <div className="max-w-3xl mx-auto">
-        
-        {/* BOTÓN VOLVER */}
-        <button 
+        <Button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors"
+            variant="ghost"
+            className="mb-6 gap-2 px-0 text-[var(--color-text-muted)] hover:bg-transparent hover:text-[var(--color-text)]"
         >
-            <ArrowLeft className="w-5 h-5" /> Volver al Dashboard
-        </button>
+            <ArrowLeft className="h-5 w-5" /> Volver al dashboard
+        </Button>
 
-        {/* ENCABEZADO DEL RAMO */}
-        <div className="bg-slate-800 rounded-3xl p-6 md:p-8 border border-slate-700 shadow-2xl mb-8 relative overflow-hidden">
-            <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10 ${esAzul ? 'bg-green-500' : 'bg-red-500'}`}></div>
+        <Card className="relative mb-8 overflow-hidden">
+            <div className={`absolute right-0 top-0 h-32 w-32 rounded-bl-full opacity-10 ${esAzul ? 'bg-green-500' : 'bg-red-500'}`}></div>
+
+            <CardHeader>
 
             {editingRamo === 'nombre' ? (
               <div className="flex items-center gap-2 mb-2">
@@ -345,7 +359,7 @@ export default function RamoDetail() {
               </div>
             )}
 
-            <div className="flex items-center gap-2 text-slate-400 mb-6">
+            <div className="flex items-center gap-2 text-[var(--color-text-muted)] mb-6">
                 <GraduationCap className="w-5 h-5" />
                 <span>{ramo.semestre || 'Semestre General'}</span>
             </div>
@@ -358,25 +372,27 @@ export default function RamoDetail() {
                     </span>
                 </div>
                 <div>
-                    <span className="block text-slate-400 text-xs uppercase tracking-wider mb-1">Estado</span>
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${esAzul ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                    <span className="block text-[var(--color-text-muted)] text-xs uppercase tracking-wider mb-1">Estado</span>
+                    <Badge variant={esAzul ? 'success' : 'danger'} className="text-xs">
                         {estadisticas.estado}
-                    </span>
+                    </Badge>
                 </div>
             </div>
-        </div>
+            </CardHeader>
+        </Card>
 
-        {/* LISTA DE UNIDADES */}
         <div className="space-y-6">
             <div className="flex justify-between items-center px-2">
-              <h3 className="text-xl font-bold text-slate-300">Desglose de Notas</h3>
-              <button
+              <h3 className="text-xl font-bold text-[var(--color-text)]">Desglose de notas</h3>
+              <Button
                 onClick={addUnidad}
-                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                variant="secondary"
+                size="sm"
+                className="gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Nueva Unidad
-              </button>
+              </Button>
             </div>
 
             {unidades.map((unidad, index) => (
@@ -633,15 +649,15 @@ export default function RamoDetail() {
                         })}
                     </div>
 
-                    {/* BOTÓN AGREGAR EVALUACIÓN */}
                     <div className="p-3 border-t border-slate-700/50">
-                      <button
+                      <Button
                         onClick={() => addEvaluacion(index)}
-                        className="w-full border border-dashed border-slate-600 hover:border-green-500 bg-slate-900/30 hover:bg-green-900/20 rounded-lg py-2 flex items-center justify-center gap-2 text-slate-500 hover:text-green-400 transition-all text-sm font-medium"
+                        variant="outline"
+                        className="w-full gap-2 border-dashed"
                       >
                         <Plus className="w-4 h-4" />
                         Nueva Evaluación
-                      </button>
+                      </Button>
                     </div>
                 </div>
             ))}

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react'
+import { cn } from '../lib/utils'
 
 export default function Toast({ message, type = 'info', onClose, duration = 3000 }) {
   useEffect(() => {
@@ -16,18 +17,26 @@ export default function Toast({ message, type = 'info', onClose, duration = 3000
   }
 
   const colors = {
-    success: 'bg-green-500/90 border-green-400/50',
-    error: 'bg-red-500/90 border-red-400/50',
-    info: 'bg-[#7AA7EC]/90 border-[#9BC7F0]/50'
+    success: 'border-green-500/40 bg-green-500/15 text-green-100',
+    error: 'border-red-500/40 bg-red-500/15 text-red-100',
+    info: 'border-[var(--color-primary)]/50 bg-[var(--color-primary)]/15 text-[var(--color-text)]'
   }
 
   return (
-    <div className={`fixed top-6 right-6 z-[100] ${colors[type]} border-2 text-white px-5 py-4 rounded-xl shadow-2xl backdrop-blur-sm flex items-center gap-3 min-w-[300px] max-w-md animate-in slide-in-from-top-5 fade-in duration-300`}>
-      {icons[type]}
-      <span className="flex-1 font-medium">{message}</span>
+    <div
+      className={cn(
+        'fixed right-4 top-4 z-[100] flex min-w-[280px] max-w-md items-center gap-3 rounded-xl border px-4 py-3 shadow-2xl backdrop-blur md:right-6 md:top-6',
+        colors[type]
+      )}
+      role="status"
+      aria-live="polite"
+    >
+      <span className="shrink-0">{icons[type]}</span>
+      <span className="flex-1 text-sm font-semibold">{message}</span>
       <button
         onClick={onClose}
-        className="hover:bg-white/20 p-1 rounded-lg transition-colors"
+        className="rounded-lg p-1 transition-colors hover:bg-white/15"
+        aria-label="Cerrar notificación"
       >
         <X className="w-4 h-4" />
       </button>

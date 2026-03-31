@@ -2,6 +2,9 @@ import { format, parseISO, isValid, isPast, isFuture, isToday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Calendar, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
 import { getColorStyles } from './ColorPicker'
+import { Button } from './ui/button'
+import { Badge } from './ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 
 export default function UpcomingTasks({ ramos, ramoColors, onNavigateToCalendar }) {
   // Recopilar todas las evaluaciones con fecha
@@ -76,69 +79,69 @@ export default function UpcomingTasks({ ramos, ramoColors, onNavigateToCalendar 
 
   if (evaluacionesConFecha.length === 0) {
     return (
-      <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-400" />
-            Próximas Evaluaciones
-          </h2>
-          <button
-            onClick={onNavigateToCalendar}
-            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-          >
-            Ver Calendario →
-          </button>
-        </div>
-        <p className="text-slate-400 text-center py-8">
-          No hay evaluaciones con fecha registradas
-        </p>
-      </div>
+      <Card>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Calendar className="h-5 w-5 text-[var(--color-primary)]" />
+              Proximas evaluaciones
+            </CardTitle>
+            <Button variant="ghost" size="sm" onClick={onNavigateToCalendar}>
+              Ver calendario
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="py-8 text-center text-sm text-[var(--color-text-muted)]">
+            No hay evaluaciones con fecha registradas.
+          </p>
+        </CardContent>
+      </Card>
     )
   }
 
   return (
-    <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-xl">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-blue-400" />
-          Próximas Evaluaciones
-        </h2>
-        <button
-          onClick={onNavigateToCalendar}
-          className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-        >
-          Ver Calendario →
-        </button>
-      </div>
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Calendar className="h-5 w-5 text-[var(--color-primary)]" />
+            Proximas evaluaciones
+          </CardTitle>
+          <Button variant="ghost" size="sm" onClick={onNavigateToCalendar}>
+            Ver calendario
+          </Button>
+        </div>
+      </CardHeader>
 
-      {/* Evaluaciones Atrasadas */}
-      {evaluacionesPasadas.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-red-400 mb-2 flex items-center gap-1">
-            <AlertCircle className="w-4 h-4" />
-            Atrasadas ({evaluacionesPasadas.length})
-          </h3>
+      <CardContent className="space-y-4">
+        {evaluacionesPasadas.length > 0 && (
           <div className="space-y-2">
-            {evaluacionesPasadas.map((evaluacion) => (
-              <TaskItem key={evaluacion.id} evaluacion={evaluacion} isPast={true} />
+            <h3 className="flex items-center gap-1 text-sm font-semibold text-red-300">
+              <AlertCircle className="h-4 w-4" />
+              Atrasadas ({evaluacionesPasadas.length})
+            </h3>
+            <div className="space-y-2">
+              {evaluacionesPasadas.map((evaluacion) => (
+                <TaskItem key={evaluacion.id} evaluacion={evaluacion} isPast />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {proximasEvaluaciones.length > 0 ? (
+          <div className="space-y-2">
+            {proximasEvaluaciones.map((evaluacion) => (
+              <TaskItem key={evaluacion.id} evaluacion={evaluacion} isPast={false} />
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Próximas Evaluaciones */}
-      {proximasEvaluaciones.length > 0 ? (
-        <div className="space-y-2">
-          {proximasEvaluaciones.map((evaluacion) => (
-            <TaskItem key={evaluacion.id} evaluacion={evaluacion} isPast={false} />
-          ))}
-        </div>
-      ) : (
-        <p className="text-slate-400 text-center py-4 text-sm">
-          No hay evaluaciones próximas
-        </p>
-      )}
-    </div>
+        ) : (
+          <p className="py-4 text-center text-sm text-[var(--color-text-muted)]">
+            No hay evaluaciones proximas.
+          </p>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
@@ -147,35 +150,38 @@ function TaskItem({ evaluacion, isPast }) {
   const hoy = isToday(evaluacion.fechaObj)
   
   return (
-    <div 
-      className={`p-3 rounded-lg border transition-all ${
-        isPast 
-          ? 'bg-red-900/20 border-red-500/30' 
+    <div
+      className={`rounded-xl border p-3 transition-all ${
+        isPast
+          ? 'border-red-500/30 bg-red-500/10'
           : hoy
-          ? 'bg-yellow-900/20 border-yellow-500/50'
-          : 'bg-slate-700/50 border-slate-600'
+          ? 'border-amber-500/40 bg-amber-500/10'
+          : 'border-[var(--color-border)] bg-[var(--color-background)]/40'
       }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <div 
-              className={`w-2 h-2 rounded-full ${colorStyles.bg}`}
+            <div
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: colorStyles.bg }}
               title={evaluacion.ramoNombre}
             />
-            <p className="text-xs text-slate-400 truncate">
+            <p className="truncate text-xs text-[var(--color-text-muted)]">
               {evaluacion.ramoNombre}
             </p>
           </div>
-          <p className="font-medium text-white text-sm truncate">
+          <p className="truncate text-sm font-semibold text-[var(--color-text)]">
             {evaluacion.nombre}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            <Clock className="w-3 h-3 text-slate-500" />
+            <Clock className="h-3 w-3 text-[var(--color-text-muted)]" />
             <p className={`text-xs ${
-              isPast ? 'text-red-400 font-semibold' : 
-              hoy ? 'text-yellow-400 font-semibold' : 
-              'text-slate-500'
+              isPast
+                ? 'font-semibold text-red-300'
+                : hoy
+                ? 'font-semibold text-amber-300'
+                : 'text-[var(--color-text-muted)]'
             }`}>
               {hoy ? 'Hoy' : format(evaluacion.fechaObj, "dd 'de' MMMM", { locale: es })}
             </p>
@@ -183,11 +189,11 @@ function TaskItem({ evaluacion, isPast }) {
         </div>
         <div className="flex items-center gap-2">
           {evaluacion.pendiente ? (
-            <span className="text-xs px-2 py-1 rounded bg-orange-900/30 text-orange-400 border border-orange-500/30">
+            <Badge variant="warning" className="text-[11px]">
               Pendiente
-            </span>
+            </Badge>
           ) : (
-            <CheckCircle2 className="w-5 h-5 text-green-500" />
+            <CheckCircle2 className="h-5 w-5 text-green-400" />
           )}
         </div>
       </div>
